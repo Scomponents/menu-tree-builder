@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ComboboxBuilder implements IControlBuilder<ComboBox<Object>, Object> {
-    private ComboBox<Object> result;
+    protected ComboBox<Object> result;
 
     @Override
     public ComboBox<Object> create(Node icon) {

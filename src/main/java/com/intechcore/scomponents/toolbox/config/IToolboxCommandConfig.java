@@ -27,6 +27,7 @@ public interface IToolboxCommandConfig {
         BUTTON,
         TOGGLE_BUTTON,
         COMBOBOX,
+        FONT_COMBOBOX,
         COLOR_PICKER,
         SUBMENU,
         TOGGLE_GROUP

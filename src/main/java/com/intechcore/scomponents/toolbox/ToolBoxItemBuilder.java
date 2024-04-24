@@ -25,6 +25,7 @@ import com.intechcore.scomponents.toolbox.control.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -42,10 +43,13 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
+import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -58,7 +62,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class ToolBoxItemBuilder<TCustomParam> {
-    private static final Insets IMAGE_CENTER_POSITION = new Insets(0, 0, 0, 34);
+    private static final Insets IMAGE_CENTER_POSITION = new Insets(0, 0, 0, 15);
 
     private static final EventHandler<MouseEvent> consumeMouseEventFilter = (MouseEvent mouseEvent) -> {
         if (((Toggle) mouseEvent.getSource()).isSelected()) {
@@ -189,7 +193,10 @@ public class ToolBoxItemBuilder<TCustomParam> {
             CustomMenuItem subPanel = new CustomMenuItem(result);
             subPanel.setHideOnClick(false);
 
-            MenuButton submenu = new MenuButton("", data.createIcon(), subPanel);
+            BorderPane graphic = new BorderPane();
+            graphic.setCenter(data.createIcon());
+
+            MenuButton submenu = new MenuButton("", graphic, subPanel);
             submenu.setStyle("-fx-accent: transparent; -fx-selection-bar: transparent;");
             submenu.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
             if (this.recursiveCallDepth > 1) {
@@ -319,6 +326,8 @@ public class ToolBoxItemBuilder<TCustomParam> {
         switch (controlType) {
             case COMBOBOX:
                 return new ComboboxBuilder();
+            case FONT_COMBOBOX:
+                return new FontComboboxBuilder();
             case COLOR_PICKER:
                 return this.colorPickerBuilderSupplier.get();
             case BUTTON:
