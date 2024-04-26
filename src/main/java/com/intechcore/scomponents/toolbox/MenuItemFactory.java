@@ -22,10 +22,12 @@ import com.intechcore.scomponents.toolbox.command.ToolbarCommandParameter;
 import com.intechcore.scomponents.toolbox.config.IToolboxCommandConfig;
 import com.intechcore.scomponents.toolbox.config.ToggleGroupCommandConfig;
 import com.intechcore.scomponents.toolbox.control.*;
+import com.intechcore.scomponents.toolbox.control.icon.IIcon;
+import com.intechcore.scomponents.toolbox.control.icon.DefaultIconBuildMapper;
+import com.intechcore.scomponents.toolbox.control.icon.IIconBuildMapper;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -43,13 +45,10 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
-import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -61,8 +60,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class ToolBoxItemBuilder<TCustomParam> {
-    private static final Insets IMAGE_CENTER_POSITION = new Insets(0, 0, 0, 15);
+public class MenuItemFactory<TCustomParam> {
 
     private static final EventHandler<MouseEvent> consumeMouseEventFilter = (MouseEvent mouseEvent) -> {
         if (((Toggle) mouseEvent.getSource()).isSelected()) {
@@ -75,29 +73,47 @@ public class ToolBoxItemBuilder<TCustomParam> {
     private final ICommandFactory<TCustomParam> commandFactory;
     private final Map<ICommandGroup<? extends Enum<?>>, ToggleGroupData> radioButtons = new HashMap<>();
     private final CompletableFuture<IEventManager> eventManagerFuture;
-    private final Supplier<FxColorPickerBuilder<?>> colorPickerBuilderSupplier;
+    private final Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
+
+    private final IIconBuildMapper iconMapper;
 
     private int recursiveCallDepth = 0;
 
-    public ToolBoxItemBuilder(ICommandFactory<TCustomParam> commandFactory,
-                              ICommandParameterFactory<TCustomParam> paramFactory,
-                              CompletableFuture<IEventManager> eventManagerFuture) {
-        this(commandFactory, paramFactory, eventManagerFuture, null);
+    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
+                           CompletableFuture<IEventManager> eventManagerFuture) {
+        this(commandFactory, null, eventManagerFuture, null);
     }
 
-    public ToolBoxItemBuilder(ICommandFactory<TCustomParam> commandFactory,
-                              ICommandParameterFactory<TCustomParam> paramFactory,
-                              CompletableFuture<IEventManager> eventManagerFuture,
-                              Supplier<FxColorPickerBuilder<?>> colorPickerBuilderSupplier) {
+    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
+                           ICommandParameterFactory<TCustomParam> paramFactory,
+                           CompletableFuture<IEventManager> eventManagerFuture,
+                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier) {
+        this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, null);
+    }
+
+    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
+                           ICommandParameterFactory<TCustomParam> paramFactory,
+                           CompletableFuture<IEventManager> eventManagerFuture,
+                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
+                           IIconBuildMapper iconMapper) {
         this.commandFactory = commandFactory;
         this.eventManagerFuture = eventManagerFuture;
-        this.paramFactory = paramFactory;
+        this.paramFactory = paramFactory != null ? paramFactory : () -> null;
         this.nullParameter = new ToolbarCommandParameter<TCustomParam>(paramFactory.create(), null);
-        this.colorPickerBuilderSupplier = colorPickerBuilderSupplier;
+        this.colorPickerBuilderSupplier = colorPickerBuilderSupplier != null
+                ? colorPickerBuilderSupplier
+                : FxColorPickerBuilder::new;
+        this.iconMapper = iconMapper == null
+                ? new DefaultIconBuildMapper(new HashMap<>(), new Insets(0, 0, 0, 0))
+                : iconMapper;
     }
 
     public List<Node> createMenuItems(Stream<IToolboxCommandConfig> source, boolean printShortName) {
         List<Node> result = new ArrayList<>();
+
+        if (source == null) {
+            return result;
+        }
 
         source.forEach(commandConfig -> {
             Node menuItem = this.createItem(commandConfig, printShortName);
@@ -177,48 +193,17 @@ public class ToolBoxItemBuilder<TCustomParam> {
 
     private Node createItem(IToolboxCommandConfig data, boolean printShortName) {
 
-        if (data.getControlType() == IToolboxCommandConfig.ControlType.SUBMENU) {
-            this.recursiveCallDepth++;
-            GridPane result = new GridPane();
-            result.setHgap(3);
-            result.setVgap(3);
-            int[] rowIndex = new int[]{0};
-            boolean verticalDirection = this.recursiveCallDepth % 2 != 0;
-            data.getNestedCommands().forEach(toolbarItem -> {
-                Node menuItem = this.createItem(toolbarItem, printShortName);
-                int itemPosition = rowIndex[0]++;
-                result.add(menuItem, verticalDirection ? 0 : itemPosition, verticalDirection ? itemPosition : 0);
-            });
-
-            CustomMenuItem subPanel = new CustomMenuItem(result);
-            subPanel.setHideOnClick(false);
-
-            BorderPane graphic = new BorderPane();
-            graphic.setCenter(data.createIcon());
-
-            MenuButton submenu = new MenuButton("", graphic, subPanel);
-            submenu.setStyle("-fx-accent: transparent; -fx-selection-bar: transparent;");
-            submenu.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
-            if (this.recursiveCallDepth > 1) {
-                submenu.setOnMouseClicked(event -> submenu.show());
-                submenu.setOnMouseMoved(event -> submenu.show());
-                result.setOnMouseExited(event -> submenu.hide());
-            }
-
-            submenu.setMaxWidth(Double.MAX_VALUE);
-            submenu.setMaxHeight(Double.MAX_VALUE);
-            submenu.setPadding(IMAGE_CENTER_POSITION);
-
-            this.recursiveCallDepth--;
+        Node submenu = this.createSubmenu(data, printShortName);
+        if (submenu != null) {
             return submenu;
         }
 
         final IControlBuilder<? extends Control, ?> controlFactory = this.getControlFactory(data.getControlType());
-        final Control resultControl = controlFactory.create(data.createIcon());
+        final Control resultControl = controlFactory.create(this.getIcon(data.getIcon()));
         resultControl.setDisable(true);
 
         if (this.recursiveCallDepth >= 1 && resultControl instanceof ComboBox) {
-            this.comboBoxBehavior((ComboBox) resultControl);
+            this.comboBoxBehavior((ComboBox<?>)resultControl);
         }
 
         ICommandGroup<?> toggleGroupParent = data.getToggleGroup();
@@ -233,6 +218,53 @@ public class ToolBoxItemBuilder<TCustomParam> {
         this.setCommand(resultControl, controlFactory, data, printShortName);
 
         return resultControl;
+    }
+
+    private Node createSubmenu(IToolboxCommandConfig data, boolean printShortName) {
+        if (data.getControlType() != IToolboxCommandConfig.ControlType.SUBMENU) {
+            return null;
+        }
+
+        this.recursiveCallDepth++;
+        GridPane result = new GridPane();
+        result.setHgap(3);
+        result.setVgap(3);
+        int[] rowIndex = new int[]{0};
+        boolean verticalDirection = this.recursiveCallDepth % 2 != 0;
+        data.getNestedCommands().forEach(toolbarItem -> {
+            Node menuItem = this.createItem(toolbarItem, printShortName);
+            int itemPosition = rowIndex[0]++;
+            result.add(menuItem, verticalDirection ? 0 : itemPosition, verticalDirection ? itemPosition : 0);
+        });
+
+        CustomMenuItem subPanel = new CustomMenuItem(result);
+        subPanel.setHideOnClick(false);
+
+        Node icon = this.getIcon(data.getIcon());
+
+        MenuButton submenu = new MenuButton(icon != null ? "": data.toString(), icon, subPanel);
+        submenu.setStyle("-fx-accent: transparent; -fx-selection-bar: transparent;");
+        submenu.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
+        if (this.recursiveCallDepth > 1) {
+            submenu.setOnMouseClicked(event -> submenu.show());
+            submenu.setOnMouseMoved(event -> submenu.show());
+            result.setOnMouseExited(event -> submenu.hide());
+        }
+
+        submenu.setMaxWidth(Double.MAX_VALUE);
+        submenu.setMaxHeight(Double.MAX_VALUE);
+
+        Insets submenuInsets = this.iconMapper.getSubmenuPadding(data.getIcon());
+        if (submenuInsets != null) {
+            submenu.setPadding(submenuInsets);
+        }
+
+        this.recursiveCallDepth--;
+        return submenu;
+    }
+
+    private Node getIcon(IIcon icon) {
+        return this.iconMapper.createIcon(icon);
     }
 
     private ToggleGroupData getToggleData(final ICommandGroup<?> toggleGroupParentCommandConfig) {
@@ -325,9 +357,12 @@ public class ToolBoxItemBuilder<TCustomParam> {
     private IControlBuilder<? extends Control, ?> getControlFactory(IToolboxCommandConfig.ControlType controlType) {
         switch (controlType) {
             case COMBOBOX:
-                return new ComboboxBuilder();
             case FONT_COMBOBOX:
-                return new FontComboboxBuilder();
+                IControlBuilder<ComboBox<Object>, Object> result = new ComboboxBuilder();
+                if (controlType == IToolboxCommandConfig.ControlType.FONT_COMBOBOX) {
+                    result = new FontComboboxBuilderDecorator(result);
+                }
+                return result;
             case COLOR_PICKER:
                 return this.colorPickerBuilderSupplier.get();
             case BUTTON:

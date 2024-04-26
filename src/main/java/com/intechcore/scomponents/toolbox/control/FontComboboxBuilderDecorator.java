@@ -5,13 +5,21 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.text.Font;
 
-public class FontComboboxBuilder extends ComboboxBuilder {
+public class FontComboboxBuilderDecorator extends ControlBuilderDecoratorAbstract<ComboBox<Object>, Object> {
+
+    public FontComboboxBuilderDecorator(IControlBuilder<ComboBox<Object>, Object> chainBuilder) {
+        super(chainBuilder);
+    }
 
     @Override
     public ComboBox<Object> create(Node icon) {
-        super.create(icon);
+        ComboBox<Object> result = super.create(icon);
+        this.setFontCellFactory(result);
+        return result;
+    }
 
-        this.result.setCellFactory(objectListView -> new ListCell<>() {
+    private void setFontCellFactory(ComboBox<Object> result) {
+        result.setCellFactory(objectListView -> new ListCell<Object>() {
             @Override
             protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
@@ -21,7 +29,5 @@ public class FontComboboxBuilder extends ComboboxBuilder {
                 setText(text);
             }
         });
-
-        return this.result;
     }
 }

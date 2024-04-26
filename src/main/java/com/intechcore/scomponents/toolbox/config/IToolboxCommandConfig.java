@@ -13,12 +13,12 @@
 package com.intechcore.scomponents.toolbox.config;
 
 import com.intechcore.scomponents.toolbox.command.ICommandGroup;
-import javafx.scene.Node;
+import com.intechcore.scomponents.toolbox.control.icon.IIcon;
 
 import java.util.stream.Stream;
 
 public interface IToolboxCommandConfig {
-    Node createIcon();
+    IIcon getIcon();
     ControlType getControlType();
     Stream<IToolboxCommandConfig> getNestedCommands();
     <TCommandGroup extends Enum<TCommandGroup>> ICommandGroup<TCommandGroup> getToggleGroup();
