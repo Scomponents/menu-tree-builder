@@ -14,9 +14,10 @@
     </organization>
 
     <properties>
-        <javaVersion>8</javaVersion>
+        <javaVersion>11</javaVersion>
         <javaVersionForLibs>-java${javaVersion}</javaVersionForLibs>
         <common-core.version>1.0.0${javaVersionForLibs}</common-core.version>
+        <batik.version>1.17</batik.version>
         <maven.compiler.source>${javaVersion}</maven.compiler.source>
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
         <itcReleasesUrl>https://nexus.intechcore.online/repository/maven-scomponents-releases-scell/</itcReleasesUrl>
@@ -41,6 +42,11 @@
             <groupId>com.intechcore.scomponents</groupId>
             <artifactId>common-core</artifactId>
             <version>${common-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>${batik.version}</version>
         </dependency>
     </dependencies>
 
