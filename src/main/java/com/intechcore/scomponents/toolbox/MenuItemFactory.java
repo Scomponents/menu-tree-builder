@@ -203,7 +203,7 @@ public class MenuItemFactory<TCustomParam> {
         resultControl.setDisable(true);
 
         if (this.recursiveCallDepth >= 1 && resultControl instanceof ComboBox) {
-            this.comboBoxBehavior((ComboBox<?>)resultControl);
+            this.comboBoxBehavior((ComboBox<String>)resultControl);
         }
 
         ICommandGroup<?> toggleGroupParent = data.getToggleGroup();
@@ -247,6 +247,8 @@ public class MenuItemFactory<TCustomParam> {
         submenu.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
         if (this.recursiveCallDepth > 1) {
             submenu.setOnMouseClicked(event -> submenu.show());
+                submenu.setOnMouseMoved(event -> submenu.show());
+                result.setOnMouseExited(event -> submenu.hide());
         }
 
         submenu.setMaxWidth(Double.MAX_VALUE);
@@ -256,6 +258,15 @@ public class MenuItemFactory<TCustomParam> {
         if (submenuInsets != null) {
             submenu.setPadding(submenuInsets);
         }
+
+        this.eventManagerFuture.thenCompose(eventManager -> this.commandFactory.create(data)
+                    .thenAcceptAsync(command -> {
+                        if (command == null) {
+                            return;
+                        }
+
+                        setTooltip(submenu, command.getCommandInfo().getFullName());
+                    }));
 
         this.recursiveCallDepth--;
         return submenu;
@@ -396,7 +407,7 @@ public class MenuItemFactory<TCustomParam> {
     }
 
     private static void setTooltip(Control result, ITranslatedText text) {
-        if (text != null && text.getDefaultLangText().length() > 0) {
+        if (text != null && !text.getDefaultLangText().isEmpty()) {
             result.setTooltip(new Tooltip(text.getDefaultLangText()));
         }
     }
@@ -424,7 +435,7 @@ public class MenuItemFactory<TCustomParam> {
         }
     }
 
-    void comboBoxBehavior(ComboBox resultControl) {
+    void comboBoxBehavior(ComboBox<String> resultControl) {
         resultControl.setOnMouseClicked(event -> resultControl.show());
         resultControl.setCellFactory((Callback<ListView<String>, ListCell<String>>) param -> new ListCell<String>() {
             @Override
