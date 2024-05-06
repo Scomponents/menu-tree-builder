@@ -17,22 +17,46 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class ComboboxBuilder implements IControlBuilder<ComboBox<Object>, Object> {
-    protected ComboBox<Object> result;
+public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object> {
+    protected ActionComboBox result;
 
     @Override
     public ComboBox<Object> create(Node icon) {
-        ComboBox<Object> comboBox = new ComboBox<>();
+        ActionComboBox comboBox = new ActionComboBox();
         comboBox.setEditable(false);
+
+        comboBox.setCellFactory(objectListView -> {
+            ListCell<Object> cell = getListCell();
+            cell.setOnMousePressed(event -> {
+                EventHandler<ActionEvent> action = this.result.getAction();
+
+                if (action != null) {
+                    action.handle(new ActionEvent(event.getSource(), event.getTarget()));
+                }
+            });
+
+            return cell;
+        });
 
         this.result = comboBox;
         this.result.setMaxHeight(Double.MAX_VALUE);
         return this.result;
+    }
+
+    protected ListCell<Object> getListCell() {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+                setText((String)item);
+            }
+        };
     }
 
     @Override
@@ -47,18 +71,18 @@ public class ComboboxBuilder implements IControlBuilder<ComboBox<Object>, Object
     @Override
     public Consumer<Object> getExternalChangeValueConsumer() {
         return newValue -> {
-            EventHandler<ActionEvent> value = this.result.getOnAction();
-            this.result.setOnAction(null);
+            EventHandler<ActionEvent> value = this.result.getAction();
+            this.result.setAction(null);
 
             this.result.getSelectionModel().select(newValue);
 
-            this.result.setOnAction(value);
+            this.result.setAction(value);
         };
     }
 
     @Override
     public void setOnAction(EventHandler<ActionEvent> value) {
-        this.result.setOnAction(value);
+        this.result.setAction(value);
     }
 
     @Override

@@ -358,7 +358,7 @@ public class MenuItemFactory<TCustomParam> {
         switch (controlType) {
             case COMBOBOX:
             case FONT_COMBOBOX:
-                IControlBuilder<ComboBox<Object>, Object> result = new ComboboxBuilder();
+                IControlBuilder<ComboBox<Object>, Object> result = new ComboBoxBuilder();
                 if (controlType == IToolboxCommandConfig.ControlType.FONT_COMBOBOX) {
                     result = new FontComboboxBuilderDecorator(result);
                 }
