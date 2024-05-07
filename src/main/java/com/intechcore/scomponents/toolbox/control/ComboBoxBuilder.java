@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -71,6 +72,12 @@ public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object
     @Override
     public Consumer<Object> getExternalChangeValueConsumer() {
         return newValue -> {
+            List<Object> items = this.result.getItems();
+
+            if (!items.contains(newValue)) {
+                items.add(newValue);
+            }
+
             EventHandler<ActionEvent> value = this.result.getAction();
             this.result.setAction(null);
 
