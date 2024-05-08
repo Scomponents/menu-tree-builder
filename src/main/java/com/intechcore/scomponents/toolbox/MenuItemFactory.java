@@ -247,8 +247,6 @@ public class MenuItemFactory<TCustomParam> {
         submenu.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
         if (this.recursiveCallDepth > 1) {
             submenu.setOnMouseClicked(event -> submenu.show());
-            submenu.setOnMouseMoved(event -> submenu.show());
-            result.setOnMouseExited(event -> submenu.hide());
         }
 
         submenu.setMaxWidth(Double.MAX_VALUE);
@@ -427,7 +425,6 @@ public class MenuItemFactory<TCustomParam> {
     }
 
     void comboBoxBehavior(ComboBox resultControl) {
-        resultControl.setOnMouseMoved(event -> resultControl.show());
         resultControl.setOnMouseClicked(event -> resultControl.show());
         resultControl.setCellFactory((Callback<ListView<String>, ListCell<String>>) param -> new ListCell<String>() {
             @Override
@@ -436,9 +433,6 @@ public class MenuItemFactory<TCustomParam> {
                 if (item != null) {
                     this.setText(item);
                     this.setTextFill(Color.BLACK);
-
-                    this.setOnMouseMoved(event -> this.setTextFill(Color.RED)); // TODO: remove this
-                    this.setOnMouseExited(event -> this.setTextFill(Color.BLACK));
                 }
             }
         });
