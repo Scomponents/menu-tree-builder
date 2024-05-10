@@ -73,7 +73,7 @@ public class MenuItemFactory<TCustomParam> {
     private final ICommandFactory<TCustomParam> commandFactory;
     private final Map<ICommandGroup<? extends Enum<?>>, ToggleGroupData> radioButtons = new HashMap<>();
     private final CompletableFuture<IEventManager> eventManagerFuture;
-    private final Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
+    private final Supplier<DefaultColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
     private final boolean openSubmenuOnHover;
     private final Double iconScaleFactor;
 
@@ -89,14 +89,14 @@ public class MenuItemFactory<TCustomParam> {
     public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
                            ICommandParameterFactory<TCustomParam> paramFactory,
                            CompletableFuture<IEventManager> eventManagerFuture,
-                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier) {
+                           Supplier<DefaultColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier) {
         this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, null, null);
     }
 
     public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
                            ICommandParameterFactory<TCustomParam> paramFactory,
                            CompletableFuture<IEventManager> eventManagerFuture,
-                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
+                           Supplier<DefaultColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
                            IIconBuildMapper iconMapper,
                            Double iconScaleFctor) {
         this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, iconMapper,
@@ -106,7 +106,7 @@ public class MenuItemFactory<TCustomParam> {
     public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
                            ICommandParameterFactory<TCustomParam> paramFactory,
                            CompletableFuture<IEventManager> eventManagerFuture,
-                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
+                           Supplier<DefaultColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
                            IIconBuildMapper iconMapper,
                            boolean openSubmenuOnHover,
                            Double iconScaleFactor) {
@@ -219,7 +219,7 @@ public class MenuItemFactory<TCustomParam> {
         resultControl.setDisable(true);
 
         if (this.recursiveCallDepth >= 1 && resultControl instanceof ComboBox) {
-            this.comboBoxBehavior((ComboBox<String>)resultControl);
+            this.comboBoxBehavior((ComboBox<?>)resultControl);
         }
 
         ICommandGroup<?> toggleGroupParent = data.getToggleGroup();
@@ -263,10 +263,8 @@ public class MenuItemFactory<TCustomParam> {
         submenu.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
         if (this.recursiveCallDepth > 1) {
             submenu.setOnMouseClicked(event -> submenu.show());
-            if (this.openSubmenuOnHover) {
-                submenu.setOnMouseMoved(event -> submenu.show());
-                result.setOnMouseExited(event -> submenu.hide());
-            }
+            submenu.setOnMouseMoved(event -> submenu.show());
+            result.setOnMouseExited(event -> submenu.hide());
         }
 
         submenu.setMaxWidth(Double.MAX_VALUE);
@@ -276,8 +274,6 @@ public class MenuItemFactory<TCustomParam> {
         if (submenuInsets != null) {
             submenu.setPadding(submenuInsets);
         }
-
-        setTooltip(submenu, this.commandFactory.createTooltip(data));
 
         this.recursiveCallDepth--;
         return submenu;
@@ -307,7 +303,7 @@ public class MenuItemFactory<TCustomParam> {
                             final IToolboxCommandConfig data, boolean printShortNameAnyway) {
 
         final Supplier<?> commandValueFactory = controlFactory.getCommandParameterValueFactory();
-        final Consumer<Object> newValueConsumer = (Consumer<Object>)controlFactory.getExternalChangeValueConsumer();
+        final Consumer<Object> newValueConsumer = (Consumer<Object>) controlFactory.getExternalChangeValueConsumer();
         this.eventManagerFuture.thenCompose(eventManager -> this.commandFactory.create(data)
                 .thenAcceptAsync(command -> {
             if (command == null) {
@@ -364,7 +360,7 @@ public class MenuItemFactory<TCustomParam> {
 
             Object defaultValue = command.getCommandInfo().getDefaultValue();
             if (defaultValue != null) {
-                 ((IControlBuilder<? extends Control, Object>)controlFactory).setDefaultValue(defaultValue);
+                 ((IControlBuilder<? extends Control, Object>) controlFactory).setDefaultValue(defaultValue);
             }
 
         }, Platform::runLater));
@@ -427,7 +423,7 @@ public class MenuItemFactory<TCustomParam> {
     }
 
     private static void setTooltip(Control result, ITranslatedText text) {
-        if (text != null && !text.getDefaultLangText().isEmpty()) {
+        if (text != null && text.getDefaultLangText().length() > 0) {
             result.setTooltip(new Tooltip(text.getDefaultLangText()));
         }
     }
@@ -455,7 +451,8 @@ public class MenuItemFactory<TCustomParam> {
         }
     }
 
-    void comboBoxBehavior(ComboBox<String> resultControl) {
+    void comboBoxBehavior(ComboBox resultControl) {
+        resultControl.setOnMouseMoved(event -> resultControl.show());
         resultControl.setOnMouseClicked(event -> resultControl.show());
         resultControl.setCellFactory((Callback<ListView<String>, ListCell<String>>) param -> new ListCell<String>() {
             @Override
@@ -464,6 +461,9 @@ public class MenuItemFactory<TCustomParam> {
                 if (item != null) {
                     this.setText(item);
                     this.setTextFill(Color.BLACK);
+
+                    this.setOnMouseMoved(event -> this.setTextFill(Color.RED)); // TODO: remove this
+                    this.setOnMouseExited(event -> this.setTextFill(Color.BLACK));
                 }
             }
         });

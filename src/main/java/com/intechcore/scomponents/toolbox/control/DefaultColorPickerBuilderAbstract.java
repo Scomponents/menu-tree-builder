@@ -22,12 +22,12 @@ import javafx.scene.paint.Color;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class ColorPickerBuilderAbstract<TColor> implements IControlBuilder<ColorPicker, TColor> {
-    private ColorPicker result;
+public abstract class DefaultColorPickerBuilderAbstract<TColor> implements IControlBuilder<DefaultColorPicker, TColor> {
+    private DefaultColorPicker result;
 
     @Override
-    public ColorPicker create(Node icon) {
-        ColorPicker colorPicker = new ColorPicker();
+    public DefaultColorPicker create(Node icon) {
+        DefaultColorPicker colorPicker = new DefaultColorPicker();
         colorPicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
         colorPicker.setDisable(true);
 
@@ -39,6 +39,13 @@ public abstract class ColorPickerBuilderAbstract<TColor> implements IControlBuil
     @Override
     public void configureForCommand(AbstractCommand<?> command) {
         this.result.setPromptText(command.getCommandInfo().getShortName().getDefaultLangText());
+        Color color = (Color) command.getCommandInfo().getDefaultValue();
+
+        if (color == null) {
+            color = Color.BLACK;
+        }
+
+        this.result.setDefaultColor(color);
     }
 
     @Override
