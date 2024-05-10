@@ -13,10 +13,12 @@
 package com.intechcore.scomponents.toolbox.command;
 
 import com.intechcore.scomponents.toolbox.config.IToolboxCommandConfig;
+import com.intechcore.scomponents.toolbox.control.ITranslatedText;
 
 import java.util.concurrent.CompletableFuture;
 
 public interface ICommandFactory<TCommandParam> {
     CompletableFuture<AbstractCommand<TCommandParam>> create(IToolboxCommandConfig commandType);
     CompletableFuture<AbstractCommand<TCommandParam>> createGroupCommand(ICommandGroup<?> config);
+    ITranslatedText createTooltip(IToolboxCommandConfig commandType);
 }

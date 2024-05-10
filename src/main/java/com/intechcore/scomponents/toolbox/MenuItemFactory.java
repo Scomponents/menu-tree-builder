@@ -74,6 +74,7 @@ public class MenuItemFactory<TCustomParam> {
     private final Map<ICommandGroup<? extends Enum<?>>, ToggleGroupData> radioButtons = new HashMap<>();
     private final CompletableFuture<IEventManager> eventManagerFuture;
     private final Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
+    private final boolean openSubmenuOnHover;
 
     private final IIconBuildMapper iconMapper;
 
@@ -96,8 +97,18 @@ public class MenuItemFactory<TCustomParam> {
                            CompletableFuture<IEventManager> eventManagerFuture,
                            Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
                            IIconBuildMapper iconMapper) {
+        this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, iconMapper, false);
+    }
+
+    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
+                           ICommandParameterFactory<TCustomParam> paramFactory,
+                           CompletableFuture<IEventManager> eventManagerFuture,
+                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
+                           IIconBuildMapper iconMapper,
+                           boolean openSubmenuOnHover) {
         this.commandFactory = commandFactory;
         this.eventManagerFuture = eventManagerFuture;
+        this.openSubmenuOnHover = openSubmenuOnHover;
         this.paramFactory = paramFactory != null ? paramFactory : () -> null;
         this.nullParameter = new ToolbarCommandParameter<TCustomParam>(paramFactory.create(), null);
         this.colorPickerBuilderSupplier = colorPickerBuilderSupplier != null
@@ -247,8 +258,10 @@ public class MenuItemFactory<TCustomParam> {
         submenu.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
         if (this.recursiveCallDepth > 1) {
             submenu.setOnMouseClicked(event -> submenu.show());
+            if (this.openSubmenuOnHover) {
                 submenu.setOnMouseMoved(event -> submenu.show());
                 result.setOnMouseExited(event -> submenu.hide());
+            }
         }
 
         submenu.setMaxWidth(Double.MAX_VALUE);
@@ -259,14 +272,7 @@ public class MenuItemFactory<TCustomParam> {
             submenu.setPadding(submenuInsets);
         }
 
-        this.eventManagerFuture.thenCompose(eventManager -> this.commandFactory.create(data)
-                    .thenAcceptAsync(command -> {
-                        if (command == null) {
-                            return;
-                        }
-
-                        setTooltip(submenu, command.getCommandInfo().getFullName());
-                    }));
+        setTooltip(submenu, this.commandFactory.createTooltip(data));
 
         this.recursiveCallDepth--;
         return submenu;
@@ -287,7 +293,7 @@ public class MenuItemFactory<TCustomParam> {
                             final IToolboxCommandConfig data, boolean printShortNameAnyway) {
 
         final Supplier<?> commandValueFactory = controlFactory.getCommandParameterValueFactory();
-        final Consumer<Object> newValueConsumer = (Consumer<Object>) controlFactory.getExternalChangeValueConsumer();
+        final Consumer<Object> newValueConsumer = (Consumer<Object>)controlFactory.getExternalChangeValueConsumer();
         this.eventManagerFuture.thenCompose(eventManager -> this.commandFactory.create(data)
                 .thenAcceptAsync(command -> {
             if (command == null) {
@@ -344,7 +350,7 @@ public class MenuItemFactory<TCustomParam> {
 
             Object defaultValue = command.getCommandInfo().getDefaultValue();
             if (defaultValue != null) {
-                 ((IControlBuilder<? extends Control, Object>) controlFactory).setDefaultValue(defaultValue);
+                 ((IControlBuilder<? extends Control, Object>)controlFactory).setDefaultValue(defaultValue);
             }
 
         }, Platform::runLater));
