@@ -50,7 +50,7 @@ public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object
     }
 
     protected ListCell<Object> getListCell() {
-        return new ListCell<>() {
+        return new ListCell<Object>() {
             @Override
             protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);

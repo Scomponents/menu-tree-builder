@@ -22,7 +22,7 @@ public class FontComboboxBuilderDecorator extends ControlBuilderDecoratorAbstrac
 
     private void setFontCellFactory(ActionComboBox result) {
         result.setCellFactory(objectListView -> {
-            ListCell<Object> cell = new ListCell<>() {
+            ListCell<Object> cell = new ListCell<Object>() {
                 @Override
                 protected void updateItem(Object item, boolean empty) {
                     super.updateItem(item, empty);
