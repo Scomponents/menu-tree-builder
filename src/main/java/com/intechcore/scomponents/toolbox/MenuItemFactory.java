@@ -75,6 +75,7 @@ public class MenuItemFactory<TCustomParam> {
     private final CompletableFuture<IEventManager> eventManagerFuture;
     private final Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
     private final boolean openSubmenuOnHover;
+    private final Double iconScaleFactor;
 
     private final IIconBuildMapper iconMapper;
 
@@ -89,15 +90,7 @@ public class MenuItemFactory<TCustomParam> {
                            ICommandParameterFactory<TCustomParam> paramFactory,
                            CompletableFuture<IEventManager> eventManagerFuture,
                            Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier) {
-        this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, null);
-    }
-
-    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
-                           ICommandParameterFactory<TCustomParam> paramFactory,
-                           CompletableFuture<IEventManager> eventManagerFuture,
-                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
-                           IIconBuildMapper iconMapper) {
-        this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, iconMapper, false);
+        this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, null, null);
     }
 
     public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
@@ -105,10 +98,22 @@ public class MenuItemFactory<TCustomParam> {
                            CompletableFuture<IEventManager> eventManagerFuture,
                            Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
                            IIconBuildMapper iconMapper,
-                           boolean openSubmenuOnHover) {
+                           Double iconScaleFctor) {
+        this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, iconMapper,
+                false, iconScaleFctor);
+    }
+
+    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
+                           ICommandParameterFactory<TCustomParam> paramFactory,
+                           CompletableFuture<IEventManager> eventManagerFuture,
+                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
+                           IIconBuildMapper iconMapper,
+                           boolean openSubmenuOnHover,
+                           Double iconScaleFactor) {
         this.commandFactory = commandFactory;
         this.eventManagerFuture = eventManagerFuture;
         this.openSubmenuOnHover = openSubmenuOnHover;
+        this.iconScaleFactor = iconScaleFactor;
         this.paramFactory = paramFactory != null ? paramFactory : () -> null;
         this.nullParameter = new ToolbarCommandParameter<TCustomParam>(paramFactory.create(), null);
         this.colorPickerBuilderSupplier = colorPickerBuilderSupplier != null
@@ -279,7 +284,16 @@ public class MenuItemFactory<TCustomParam> {
     }
 
     private Node getIcon(IIcon icon) {
-        return this.iconMapper.createIcon(icon);
+        Node result = this.iconMapper.createIcon(icon);
+        if (result == null) {
+            return null;
+        }
+
+        if (this.iconScaleFactor != null) {
+            result.setScaleX(this.iconScaleFactor);
+            result.setScaleY(this.iconScaleFactor);
+        }
+        return result;
     }
 
     private ToggleGroupData getToggleData(final ICommandGroup<?> toggleGroupParentCommandConfig) {
