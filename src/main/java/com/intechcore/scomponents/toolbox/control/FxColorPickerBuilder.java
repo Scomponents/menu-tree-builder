@@ -15,7 +15,7 @@ package com.intechcore.scomponents.toolbox.control;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
 
-public class FxColorPickerBuilder extends DefaultColorPickerBuilderAbstract<Color> {
+public class FxColorPickerBuilder extends ColorPickerBuilderAbstract<Color> {
     @Override
     protected Color createFxColor(Color source) {
         return source;

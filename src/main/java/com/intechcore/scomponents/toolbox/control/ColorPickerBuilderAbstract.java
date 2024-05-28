@@ -17,17 +17,18 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Skin;
 import javafx.scene.paint.Color;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class DefaultColorPickerBuilderAbstract<TColor> implements IControlBuilder<DefaultColorPicker, TColor> {
-    private DefaultColorPicker result;
+public abstract class ColorPickerBuilderAbstract<TColor> implements IControlBuilder<ColorPicker, TColor> {
+    private ColorPicker result;
 
     @Override
-    public DefaultColorPicker create(Node icon) {
-        DefaultColorPicker colorPicker = new DefaultColorPicker();
+    public ColorPicker create(Node icon) {
+        ColorPicker colorPicker = new ColorPicker();
         colorPicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
         colorPicker.setDisable(true);
 
@@ -39,13 +40,11 @@ public abstract class DefaultColorPickerBuilderAbstract<TColor> implements ICont
     @Override
     public void configureForCommand(AbstractCommand<?> command) {
         this.result.setPromptText(command.getCommandInfo().getShortName().getDefaultLangText());
-        Color color = (Color) command.getCommandInfo().getDefaultValue();
 
-        if (color == null) {
-            color = Color.BLACK;
+        Skin<?> customSkin = this.createCustomSkin(this.result, command);
+        if (customSkin != null) {
+            this.result.setSkin(customSkin);
         }
-
-        this.result.setDefaultColor(color);
     }
 
     @Override

@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -36,4 +37,8 @@ public interface IControlBuilder<TControl extends Control, TResultValue> {
     default void actionCancelled(TResultValue commandParameter) { }
 
     void setDefaultValue(TResultValue value);
+
+    default Skin<?> createCustomSkin(TControl control, AbstractCommand<?> command) {
+        return null;
+    }
 }
