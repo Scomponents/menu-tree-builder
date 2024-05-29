@@ -22,6 +22,13 @@
         <itcReleasesUrl>https://nexus.intechcore.online/repository/maven-scomponents-releases-scell/</itcReleasesUrl>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>itc-releases</id>
+            <url>${itcReleasesUrl}</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>itc-releases</id>
