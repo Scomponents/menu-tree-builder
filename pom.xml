@@ -6,7 +6,7 @@
 
     <artifactId>toolbox</artifactId>
     <groupId>com.intechcore.scomponents</groupId>
-    <version>1.1.4-java${javaVersion}</version>
+    <version>1.1.5-java${javaVersion}</version>
 
     <organization>
         <name>Intechcore GmbH</name>
@@ -14,7 +14,7 @@
     </organization>
 
     <properties>
-        <javaVersion>11</javaVersion>
+        <javaVersion>8</javaVersion>
         <javaVersionForLibs>-java${javaVersion}</javaVersionForLibs>
         <common-core.version>1.0.0${javaVersionForLibs}</common-core.version>
         <batik.version>1.17</batik.version>

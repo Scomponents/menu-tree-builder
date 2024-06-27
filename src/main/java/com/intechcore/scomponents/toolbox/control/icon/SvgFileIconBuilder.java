@@ -16,17 +16,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class SvgIconBuilder implements IIconBuilder {
+public class SvgFileIconBuilder implements IIconBuilder {
 
     public static final float ICON_SIZE = 20.0f;
 
     private final String resourceParentFolderName;
 
-    public SvgIconBuilder() {
+    public SvgFileIconBuilder() {
         this(null);
     }
 
-    public SvgIconBuilder(String resourceParentFolderName) {
+    public SvgFileIconBuilder(String resourceParentFolderName) {
         this.resourceParentFolderName = resourceParentFolderName == null ? "" : resourceParentFolderName;
     }
 
