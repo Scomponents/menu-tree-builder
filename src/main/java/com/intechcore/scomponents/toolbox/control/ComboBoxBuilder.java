@@ -29,11 +29,11 @@ public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object
 
     @Override
     public ComboBox<Object> create(Node icon) {
-        ActionComboBox comboBox = new ActionComboBox();
-        comboBox.setEditable(false);
+        this.result = new ActionComboBox();
+        this.result.setEditable(false);
 
-        comboBox.setCellFactory(objectListView -> {
-            ListCell<Object> cell = getListCell();
+        this.result.setCellFactory(objectListView -> {
+            ListCell<Object> cell = new ActionComboBoxListCell(this.result);
             cell.setOnMousePressed(event -> {
                 EventHandler<ActionEvent> action = this.result.getAction();
 
@@ -45,19 +45,8 @@ public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object
             return cell;
         });
 
-        this.result = comboBox;
         this.result.setMaxHeight(Double.MAX_VALUE);
         return this.result;
-    }
-
-    protected ListCell<Object> getListCell() {
-        return new ListCell<Object>() {
-            @Override
-            protected void updateItem(Object item, boolean empty) {
-                super.updateItem(item, empty);
-                setText((String)item);
-            }
-        };
     }
 
     @Override
@@ -75,6 +64,7 @@ public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object
             List<Object> items = this.result.getItems();
 
             if (!items.contains(newValue)) {
+                result.addUnsupportedItem(newValue);
                 items.add(newValue);
             }
 

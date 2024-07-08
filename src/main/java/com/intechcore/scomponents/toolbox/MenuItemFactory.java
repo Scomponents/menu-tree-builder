@@ -408,7 +408,7 @@ public class MenuItemFactory<TCustomParam> {
             case FONT_COMBOBOX:
                 IControlBuilder<ComboBox<Object>, Object> result = new ComboBoxBuilder();
                 if (controlType == IToolboxCommandConfig.ControlType.FONT_COMBOBOX) {
-                    result = new FontComboboxBuilderDecorator(result);
+                    result = new FontComboBoxBuilderDecorator(result);
                 }
                 return result;
             case COLOR_PICKER:
