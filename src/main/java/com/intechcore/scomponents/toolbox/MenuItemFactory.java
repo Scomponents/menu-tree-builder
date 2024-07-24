@@ -54,6 +54,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -76,7 +77,7 @@ public class MenuItemFactory<TCustomParam> {
     private final Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
     private final boolean openSubmenuOnHover;
     private final Double iconScaleFactor;
-
+    private final String id = "itc_ui_";
     private final IIconBuildMapper iconMapper;
 
     private int recursiveCallDepth = 0;
@@ -133,7 +134,7 @@ public class MenuItemFactory<TCustomParam> {
 
         source.forEach(commandConfig -> {
             Node menuItem = this.createItem(commandConfig, printShortName);
-
+            menuItem.setId(id + commandConfig.toString().toLowerCase(Locale.ROOT));
             if (menuItem instanceof MenuButton) {
                 ((MenuButton) menuItem).setPadding(Insets.EMPTY);
             }
@@ -211,6 +212,7 @@ public class MenuItemFactory<TCustomParam> {
 
         Node submenu = this.createSubmenu(data, printShortName);
         if (submenu != null) {
+            submenu.setId(id + data.toString().toLowerCase(Locale.ROOT));
             return submenu;
         }
 
