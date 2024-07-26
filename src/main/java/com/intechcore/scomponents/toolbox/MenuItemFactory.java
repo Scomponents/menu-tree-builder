@@ -29,6 +29,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -308,6 +309,8 @@ public class MenuItemFactory<TCustomParam> {
         if (this.iconScaleFactor != null) {
             result.setScaleX(this.iconScaleFactor);
             result.setScaleY(this.iconScaleFactor);
+            // return group, so scale is considered for layout
+            result = new Group(result);
         }
         return result;
     }
