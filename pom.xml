@@ -6,7 +6,7 @@
 
     <artifactId>toolbox</artifactId>
     <groupId>com.intechcore.scomponents</groupId>
-    <version>1.1.5-java${javaVersion}</version>
+    <version>1.1.6-java${javaVersion}</version>
 
     <organization>
         <name>Intechcore GmbH</name>
@@ -14,7 +14,7 @@
     </organization>
 
     <properties>
-        <javaVersion>8</javaVersion>
+        <javaVersion>11</javaVersion>
         <javaVersionForLibs>-java${javaVersion}</javaVersionForLibs>
         <common-core.version>1.0.0${javaVersionForLibs}</common-core.version>
         <batik.version>1.17</batik.version>
@@ -93,6 +93,15 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>BuildOnJava8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <javaVersion>8</javaVersion>
+            </properties>
+        </profile>
         <profile>
             <id>BuildOnJava11</id>
             <activation>

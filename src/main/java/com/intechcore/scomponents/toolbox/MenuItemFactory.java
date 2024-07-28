@@ -62,6 +62,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class MenuItemFactory<TCustomParam> {
+    private static final String MENU_BUTTON_ID_COUNTER_VAR_TEMPLATE = "{%_COUNTER_%}";
+    private static final String MENU_BUTTON_ID_START_VALUE = "ITC_TOOLBOX" + MENU_BUTTON_ID_COUNTER_VAR_TEMPLATE
+            + "_BUTTON_";
+
+    private static int callCounter = 0;
 
     private static final EventHandler<MouseEvent> consumeMouseEventFilter = (MouseEvent mouseEvent) -> {
         if (((Toggle) mouseEvent.getSource()).isSelected()) {
@@ -77,7 +82,6 @@ public class MenuItemFactory<TCustomParam> {
     private final Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
     private final boolean openSubmenuOnHover;
     private final Double iconScaleFactor;
-    private final String id = "itc_ui_";
     private final IIconBuildMapper iconMapper;
 
     private int recursiveCallDepth = 0;
@@ -134,7 +138,6 @@ public class MenuItemFactory<TCustomParam> {
 
         source.forEach(commandConfig -> {
             Node menuItem = this.createItem(commandConfig, printShortName);
-            menuItem.setId(id + commandConfig.toString().toLowerCase(Locale.ROOT));
             if (menuItem instanceof MenuButton) {
                 ((MenuButton) menuItem).setPadding(Insets.EMPTY);
             }
@@ -201,6 +204,7 @@ public class MenuItemFactory<TCustomParam> {
             }));
         });
 
+        callCounter++;
         return result;
     }
 
@@ -210,14 +214,13 @@ public class MenuItemFactory<TCustomParam> {
 
     private Node createItem(IToolboxCommandConfig data, boolean printShortName) {
 
-        Node submenu = this.createSubmenu(data, printShortName);
-        if (submenu != null) {
-            submenu.setId(id + data.toString().toLowerCase(Locale.ROOT));
-            return submenu;
+        if (data.getControlType() == IToolboxCommandConfig.ControlType.SUBMENU) {
+            return this.createSubmenu(data, printShortName);
         }
 
         final IControlBuilder<? extends Control, ?> controlFactory = this.getControlFactory(data.getControlType());
         final Control resultControl = controlFactory.create(this.getIcon(data.getIcon()));
+        setId(resultControl, data);
         resultControl.setDisable(true);
 
         if (this.recursiveCallDepth >= 1 && resultControl instanceof ComboBox) {
@@ -238,11 +241,21 @@ public class MenuItemFactory<TCustomParam> {
         return resultControl;
     }
 
-    private Node createSubmenu(IToolboxCommandConfig data, boolean printShortName) {
-        if (data.getControlType() != IToolboxCommandConfig.ControlType.SUBMENU) {
-            return null;
+    private static void setId(Node target, IToolboxCommandConfig commandConfig) {
+        String start = MENU_BUTTON_ID_START_VALUE;
+        String counterValue = "";
+        if (callCounter > 0) {
+            counterValue = String.valueOf(callCounter + 1);
         }
+        start = start.replace(MENU_BUTTON_ID_COUNTER_VAR_TEMPLATE, counterValue);
 
+        String end = commandConfig.getControlType() == IToolboxCommandConfig.ControlType.SUBMENU
+                ? "_SUBMENU" : "";
+
+        target.setId(start + commandConfig.toString().toUpperCase(Locale.ROOT) + end);
+    }
+
+    private Node createSubmenu(IToolboxCommandConfig data, boolean printShortName) {
         this.recursiveCallDepth++;
         GridPane result = new GridPane();
         result.setHgap(3);
@@ -260,29 +273,30 @@ public class MenuItemFactory<TCustomParam> {
 
         Node icon = this.getIcon(data.getIcon());
 
-        MenuButton submenu = new MenuButton(icon != null ? "": data.toString(), icon, subPanel);
-        submenu.setStyle("-fx-accent: transparent; -fx-selection-bar: transparent;");
-        submenu.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
+        MenuButton submenuButton = new MenuButton(icon != null ? "": data.toString(), icon, subPanel);
+        setId(submenuButton, data);
+        submenuButton.setStyle("-fx-accent: transparent; -fx-selection-bar: transparent;");
+        submenuButton.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
         if (this.recursiveCallDepth > 1) {
-            submenu.setOnMouseClicked(event -> submenu.show());
+            submenuButton.setOnMouseClicked(event -> submenuButton.show());
             if (this.openSubmenuOnHover) {
-                submenu.setOnMouseMoved(event -> submenu.show());
-                result.setOnMouseExited(event -> submenu.hide());
+                submenuButton.setOnMouseMoved(event -> submenuButton.show());
+                result.setOnMouseExited(event -> submenuButton.hide());
             }
         }
 
-        submenu.setMaxWidth(Double.MAX_VALUE);
-        submenu.setMaxHeight(Double.MAX_VALUE);
+        submenuButton.setMaxWidth(Double.MAX_VALUE);
+        submenuButton.setMaxHeight(Double.MAX_VALUE);
 
         Insets submenuInsets = this.iconMapper.getSubmenuPadding(data.getIcon());
         if (submenuInsets != null) {
-            submenu.setPadding(submenuInsets);
+            submenuButton.setPadding(submenuInsets);
         }
 
-        setTooltip(submenu, this.commandFactory.createTooltip(data));
+        setTooltip(submenuButton, this.commandFactory.createTooltip(data));
 
         this.recursiveCallDepth--;
-        return submenu;
+        return submenuButton;
     }
 
     private Node getIcon(IIcon icon) {
