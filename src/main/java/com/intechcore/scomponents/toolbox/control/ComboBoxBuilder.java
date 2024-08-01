@@ -18,27 +18,39 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
+import javafx.scene.text.Font;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object> {
-    protected ActionComboBox result;
+    private ComboBox<Object> result;
+    private EventHandler<ActionEvent> eventHandler;
+    private final List<Object> unsupportedItems = new ArrayList<>();
+
+    private final boolean tryToSetFontToLabelFromItemValue;
+
+    public ComboBoxBuilder() {
+        this(false);
+    }
+
+    public ComboBoxBuilder(boolean tryToSetFontToLabelFromItemValue) {
+        this.tryToSetFontToLabelFromItemValue = tryToSetFontToLabelFromItemValue;
+    }
 
     @Override
     public ComboBox<Object> create(Node icon) {
-        this.result = new ActionComboBox();
+        this.result = new ComboBox<Object>();
         this.result.setEditable(false);
 
         this.result.setCellFactory(objectListView -> {
-            ListCell<Object> cell = new ActionComboBoxListCell(this.result);
+            ListCell<Object> cell = this.createListCell();
             cell.setOnMousePressed(event -> {
-                EventHandler<ActionEvent> action = this.result.getAction();
-
-                if (action != null) {
-                    action.handle(new ActionEvent(event.getSource(), event.getTarget()));
+                if (this.eventHandler != null) {
+                    this.eventHandler.handle(new ActionEvent(event.getSource(), event.getTarget()));
                 }
             });
 
@@ -49,11 +61,33 @@ public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object
         return this.result;
     }
 
+    public ListCell<Object> createListCell() {
+        return new ListCell<Object>() {
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+
+                this.setText((String)item);
+                this.setMinHeight(0);
+
+                double maxHeight = ComboBoxBuilder.this.unsupportedItems.contains(item) ? 0 : Double.MAX_VALUE;
+                this.setMaxHeight(maxHeight);
+
+                if (ComboBoxBuilder.this.tryToSetFontToLabelFromItemValue) {
+                    try {
+                        this.setFont(new Font((String)item, this.getFont().getSize()));
+                    } catch (Exception ignored) { }
+                }
+            }
+        };
+    }
+
     @Override
     public void configureForCommand(final AbstractCommand<?> command) {
         this.result.getItems().addAll(command.getDataSource().getItems().collect(Collectors.toList()));
     }
 
+    @Override
     public Supplier<Object> getCommandParameterValueFactory() {
         return () -> this.result.getSelectionModel().getSelectedItem();
     }
@@ -64,22 +98,17 @@ public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object
             List<Object> items = this.result.getItems();
 
             if (!items.contains(newValue)) {
-                result.addUnsupportedItem(newValue);
+                this.unsupportedItems.add(newValue);
                 items.add(newValue);
             }
 
-            EventHandler<ActionEvent> value = this.result.getAction();
-            this.result.setAction(null);
-
             this.result.getSelectionModel().select(newValue);
-
-            this.result.setAction(value);
         };
     }
 
     @Override
     public void setOnAction(EventHandler<ActionEvent> value) {
-        this.result.setAction(value);
+        this.eventHandler = value;
     }
 
     @Override

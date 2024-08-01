@@ -406,11 +406,8 @@ public class MenuItemFactory<TCustomParam> {
         switch (controlType) {
             case COMBOBOX:
             case FONT_COMBOBOX:
-                IControlBuilder<ComboBox<Object>, Object> result = new ComboBoxBuilder();
-                if (controlType == IToolboxCommandConfig.ControlType.FONT_COMBOBOX) {
-                    result = new FontComboBoxBuilderDecorator(result);
-                }
-                return result;
+                boolean setCurrentFont = controlType == IToolboxCommandConfig.ControlType.FONT_COMBOBOX;
+                return new ComboBoxBuilder(setCurrentFont);
             case COLOR_PICKER:
                 return this.colorPickerBuilderSupplier.get();
             case BUTTON:
