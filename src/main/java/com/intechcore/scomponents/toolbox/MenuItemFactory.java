@@ -471,21 +471,25 @@ public class MenuItemFactory<TCustomParam> {
         }
     }
 
-    private void comboBoxBehavior(ComboBox resultControl) {
+    private void comboBoxBehavior(ComboBox<?> resultControl) {
         resultControl.setOnMouseMoved(event -> resultControl.show());
         resultControl.setOnMouseClicked(event -> resultControl.show());
-        resultControl.setCellFactory((Callback<ListView<String>, ListCell<String>>) param -> new ListCell<String>() {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item != null) {
-                    this.setText(item);
-                    this.setTextFill(Color.BLACK);
 
-//                    this.setOnMouseMoved(event -> this.setTextFill(Color.RED)); // TODO: remove this
-//                    this.setOnMouseExited(event -> this.setTextFill(Color.BLACK));
-                }
-            }
-        });
+////        Callback<ListView<String>, ListCell<String>> existingFactory = resultControl.getCellFactory();
+//        resultControl.setCellFactory((Callback<ListView<String>, ListCell<String>>) param -> new ListCell<String>() {
+//            @Override
+//            public void updateItem(String item, boolean empty) {
+//                super.updateItem(item, empty);
+//                if (item != null) {
+//                    this.setText(item);
+//                    this.setTextFill(Color.BLACK);
+//
+////                    this.setOnMouseMoved(event -> this.setTextFill(Color.RED)); // TODO: remove this
+////                    this.setOnMouseExited(event -> this.setTextFill(Color.BLACK));
+//                }
+//
+////                existingFactory.call(param);
+//            }
+//        });
     }
 }
