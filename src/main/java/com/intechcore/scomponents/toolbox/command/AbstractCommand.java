@@ -28,7 +28,7 @@ public abstract class AbstractCommand<TParam> implements ICommand<TParam> {
     }
 
     private AbstractCommand(CommandUiData commandInfo,
-                                 ToggleGroupCommandConfig<?, ? extends ICommandInfo> groupCommandInfo) {
+                            ToggleGroupCommandConfig<?, ? extends ICommandInfo> groupCommandInfo) {
         this.commandInfo = commandInfo;
         this.groupCommandInfo = groupCommandInfo;
     }

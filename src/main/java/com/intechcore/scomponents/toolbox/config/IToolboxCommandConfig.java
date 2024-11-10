@@ -30,6 +30,7 @@ public interface IToolboxCommandConfig {
         FONT_COMBOBOX,
         COLOR_PICKER,
         SUBMENU,
-        TOGGLE_GROUP
+        TOGGLE_GROUP,
+        EMPTY
     }
 }

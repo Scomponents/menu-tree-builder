@@ -21,13 +21,20 @@ import com.intechcore.scomponents.toolbox.command.ICommandParameterFactory;
 import com.intechcore.scomponents.toolbox.command.ToolbarCommandParameter;
 import com.intechcore.scomponents.toolbox.config.IToolboxCommandConfig;
 import com.intechcore.scomponents.toolbox.config.ToggleGroupCommandConfig;
-import com.intechcore.scomponents.toolbox.control.*;
+import com.intechcore.scomponents.toolbox.control.ColorPickerBuilderAbstract;
+import com.intechcore.scomponents.toolbox.control.ComboBoxBuilder;
+import com.intechcore.scomponents.toolbox.control.FxButtonBuilder;
+import com.intechcore.scomponents.toolbox.control.FxColorPickerBuilder;
+import com.intechcore.scomponents.toolbox.control.FxToggleButtonBuilder;
+import com.intechcore.scomponents.toolbox.control.IControlBuilder;
+import com.intechcore.scomponents.toolbox.control.ITranslatedText;
 import com.intechcore.scomponents.toolbox.control.icon.IIcon;
 import com.intechcore.scomponents.toolbox.control.icon.DefaultIconBuildMapper;
 import com.intechcore.scomponents.toolbox.control.icon.IIconBuildMapper;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -37,9 +44,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Labeled;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -47,8 +53,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.util.Callback;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -66,6 +70,8 @@ public class MenuItemFactory<TCustomParam> {
     private static final String MENU_BUTTON_ID_COUNTER_VAR_TEMPLATE = "{%_COUNTER_%}";
     private static final String MENU_BUTTON_ID_START_VALUE = "ITC_TOOLBOX" + MENU_BUTTON_ID_COUNTER_VAR_TEMPLATE
             + "_BUTTON_";
+
+    private static final Insets SEPARATOR_HORIZONTAL_PADDING = new Insets(0, 0, 0, 3);
 
     private static int callCounter = 0;
 
@@ -215,6 +221,13 @@ public class MenuItemFactory<TCustomParam> {
 
     private Node createItem(IToolboxCommandConfig data, boolean printShortName) {
 
+        if (data.getControlType() == IToolboxCommandConfig.ControlType.EMPTY) {
+            Separator result = new Separator();
+            result.setOrientation(this.isHorizontalDirection() ? Orientation.HORIZONTAL : Orientation.VERTICAL);
+            result.setPadding(SEPARATOR_HORIZONTAL_PADDING);
+            return result;
+        }
+
         if (data.getControlType() == IToolboxCommandConfig.ControlType.SUBMENU) {
             return this.createSubmenu(data, printShortName);
         }
@@ -256,13 +269,17 @@ public class MenuItemFactory<TCustomParam> {
         target.setId(start + commandConfig.toString().toUpperCase(Locale.ROOT) + end);
     }
 
+    private boolean isHorizontalDirection() {
+        return this.recursiveCallDepth % 2 != 0;
+    }
+
     private Node createSubmenu(IToolboxCommandConfig data, boolean printShortName) {
         this.recursiveCallDepth++;
         GridPane result = new GridPane();
         result.setHgap(3);
         result.setVgap(3);
         int[] rowIndex = new int[]{0};
-        boolean verticalDirection = this.recursiveCallDepth % 2 != 0;
+        boolean verticalDirection = this.isHorizontalDirection();
         data.getNestedCommands().forEach(toolbarItem -> {
             Node menuItem = this.createItem(toolbarItem, printShortName);
             int itemPosition = rowIndex[0]++;
@@ -443,7 +460,7 @@ public class MenuItemFactory<TCustomParam> {
     }
 
     private static void setTooltip(Control result, ITranslatedText text) {
-        if (text != null && text.getDefaultLangText().length() > 0) {
+        if (text != null && !text.getDefaultLangText().isEmpty()) {
             result.setTooltip(new Tooltip(text.getDefaultLangText()));
         }
     }
