@@ -21,4 +21,5 @@ public interface ICommandFactory<TCommandParam> {
     CompletableFuture<AbstractCommand<TCommandParam>> create(IToolboxCommandConfig commandType);
     CompletableFuture<AbstractCommand<TCommandParam>> createGroupCommand(ICommandGroup<?> config);
     ITranslatedText createTooltip(IToolboxCommandConfig commandType);
+    TCommandParam createCommandParameter();
 }

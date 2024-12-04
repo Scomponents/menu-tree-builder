@@ -17,20 +17,15 @@ import com.intechcore.scomponents.common.core.event.manager.IEventManager;
 import com.intechcore.scomponents.toolbox.command.ICommandFactory;
 import com.intechcore.scomponents.toolbox.command.ICommandGroup;
 import com.intechcore.scomponents.toolbox.command.ICommandInfo;
-import com.intechcore.scomponents.toolbox.command.ICommandParameterFactory;
 import com.intechcore.scomponents.toolbox.command.ToolbarCommandParameter;
 import com.intechcore.scomponents.toolbox.config.IToolboxCommandConfig;
 import com.intechcore.scomponents.toolbox.config.ToggleGroupCommandConfig;
-import com.intechcore.scomponents.toolbox.control.ColorPickerBuilderAbstract;
 import com.intechcore.scomponents.toolbox.control.ComboBoxBuilder;
 import com.intechcore.scomponents.toolbox.control.FxButtonBuilder;
-import com.intechcore.scomponents.toolbox.control.FxColorPickerBuilder;
 import com.intechcore.scomponents.toolbox.control.FxToggleButtonBuilder;
 import com.intechcore.scomponents.toolbox.control.IControlBuilder;
 import com.intechcore.scomponents.toolbox.control.ITranslatedText;
 import com.intechcore.scomponents.toolbox.control.icon.IIcon;
-import com.intechcore.scomponents.toolbox.control.icon.DefaultIconBuildMapper;
-import com.intechcore.scomponents.toolbox.control.icon.IIconBuildMapper;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -81,59 +76,25 @@ public class MenuItemFactory<TCustomParam> {
         }
     };
 
-    private final ICommandParameterFactory<TCustomParam> paramFactory;
-    private final ToolbarCommandParameter<TCustomParam> nullParameter;
     private final ICommandFactory<TCustomParam> commandFactory;
-    private final Map<ICommandGroup<? extends Enum<?>>, ToggleGroupData> radioButtons = new HashMap<>();
     private final CompletableFuture<IEventManager> eventManagerFuture;
-    private final Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
-    private final boolean openSubmenuOnHover;
-    private final Double iconScaleFactor;
-    private final IIconBuildMapper iconMapper;
+    private final ToolbarCommandParameter<TCustomParam> nullParameter;
+
+    private final MenuItemFactoryBuilder.Data data;
+
+    private final Map<ICommandGroup<? extends Enum<?>>, MenuItemFactory.ToggleGroupData> radioButtons = new HashMap<>();
 
     private int recursiveCallDepth = 0;
 
-    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
-                           CompletableFuture<IEventManager> eventManagerFuture) {
-        this(commandFactory, null, eventManagerFuture, null);
-    }
 
-    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
-                           ICommandParameterFactory<TCustomParam> paramFactory,
+    MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
                            CompletableFuture<IEventManager> eventManagerFuture,
-                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier) {
-        this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, null, null);
-    }
+                           MenuItemFactoryBuilder.Data data) {
 
-    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
-                           ICommandParameterFactory<TCustomParam> paramFactory,
-                           CompletableFuture<IEventManager> eventManagerFuture,
-                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
-                           IIconBuildMapper iconMapper,
-                           Double iconScaleFactor) {
-        this(commandFactory, paramFactory, eventManagerFuture, colorPickerBuilderSupplier, iconMapper,
-                false, iconScaleFactor);
-    }
-
-    public MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
-                           ICommandParameterFactory<TCustomParam> paramFactory,
-                           CompletableFuture<IEventManager> eventManagerFuture,
-                           Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier,
-                           IIconBuildMapper iconMapper,
-                           boolean openSubmenuOnHover,
-                           Double iconScaleFactor) {
         this.commandFactory = commandFactory;
         this.eventManagerFuture = eventManagerFuture;
-        this.openSubmenuOnHover = openSubmenuOnHover;
-        this.iconScaleFactor = iconScaleFactor;
-        this.paramFactory = paramFactory != null ? paramFactory : () -> null;
-        this.nullParameter = new ToolbarCommandParameter<TCustomParam>(paramFactory.create(), null);
-        this.colorPickerBuilderSupplier = colorPickerBuilderSupplier != null
-                ? colorPickerBuilderSupplier
-                : FxColorPickerBuilder::new;
-        this.iconMapper = iconMapper == null
-                ? new DefaultIconBuildMapper(new HashMap<>(), new Insets(0, 0, 0, 0))
-                : iconMapper;
+        this.nullParameter = new ToolbarCommandParameter<TCustomParam>(this.commandFactory.createCommandParameter(), null);
+        this.data = data;
     }
 
     public List<Node> createMenuItems(Stream<IToolboxCommandConfig> source, boolean printShortName) {
@@ -180,7 +141,7 @@ public class MenuItemFactory<TCustomParam> {
 
                     IToolboxCommandConfig parameter = (IToolboxCommandConfig) newToggle.getUserData();
                     ToolbarCommandParameter<TCustomParam> commandParameter = parameter == null ? this.nullParameter :
-                            new ToolbarCommandParameter<TCustomParam>(this.paramFactory.create(), parameter);
+                            new ToolbarCommandParameter<TCustomParam>(this.commandFactory.createCommandParameter(), parameter);
                     command.execute(commandParameter).whenComplete((alsoUnused, throwable) -> {
                         toggleGroupData.toggleGroup.getToggles().forEach(node -> ((Node)node).setDisable(false));
                     });
@@ -297,7 +258,7 @@ public class MenuItemFactory<TCustomParam> {
         submenuButton.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
         if (this.recursiveCallDepth > 1) {
             submenuButton.setOnMouseClicked(event -> submenuButton.show());
-            if (this.openSubmenuOnHover) {
+            if (this.data.isOpenSubmenuOnHover()) {
                 submenuButton.setOnMouseMoved(event -> submenuButton.show());
                 result.setOnMouseExited(event -> submenuButton.hide());
             }
@@ -306,7 +267,7 @@ public class MenuItemFactory<TCustomParam> {
         submenuButton.setMaxWidth(Double.MAX_VALUE);
         submenuButton.setMaxHeight(Double.MAX_VALUE);
 
-        Insets submenuInsets = this.iconMapper.getSubmenuPadding(data.getIcon());
+        Insets submenuInsets = this.data.getIconMapper().getSubmenuPadding(data.getIcon());
         if (submenuInsets != null) {
             submenuButton.setPadding(submenuInsets);
         }
@@ -318,14 +279,14 @@ public class MenuItemFactory<TCustomParam> {
     }
 
     private Node getIcon(IIcon icon) {
-        Node result = this.iconMapper.createIcon(icon);
+        Node result = this.data.getIconMapper().createIcon(icon);
         if (result == null) {
             return null;
         }
 
-        if (this.iconScaleFactor != null) {
-            result.setScaleX(this.iconScaleFactor);
-            result.setScaleY(this.iconScaleFactor);
+        if (this.data.getIconScaleFactor() != null) {
+            result.setScaleX(this.data.getIconScaleFactor());
+            result.setScaleY(this.data.getIconScaleFactor());
             // return group, so scale is considered for layout
             result = new Group(result);
         }
@@ -360,8 +321,11 @@ public class MenuItemFactory<TCustomParam> {
                 resultControl.setDisable(true);
 
                 Object parameter = commandValueFactory.get();
-                ToolbarCommandParameter<TCustomParam> commandParameter = parameter == null ? this.nullParameter :
-                        new ToolbarCommandParameter<TCustomParam>(this.paramFactory.create(), parameter);
+                ToolbarCommandParameter<TCustomParam> commandParameter = parameter == null
+                        ? this.nullParameter
+                        : new ToolbarCommandParameter<TCustomParam>(
+                                this.commandFactory.createCommandParameter(), parameter);
+
                 command.execute(commandParameter).whenCompleteAsync((unused, throwable) -> {
                     resultControl.setDisable(false);
                     if (throwable != null && throwable.getCause() != null) {
@@ -371,6 +335,9 @@ public class MenuItemFactory<TCustomParam> {
                         throwable.printStackTrace(pw);
 
                         Alert alert = new Alert(Alert.AlertType.ERROR, throwable.getMessage(), ButtonType.CLOSE);
+                        if (this.data.getParentWindow() != null) {
+                            alert.initOwner(this.data.getParentWindow());
+                        }
                         TextArea textArea = new TextArea(sw.toString());
                         textArea.setEditable(false);
                         alert.getDialogPane().setExpandableContent(textArea);
@@ -426,7 +393,7 @@ public class MenuItemFactory<TCustomParam> {
                 boolean setCurrentFont = controlType == IToolboxCommandConfig.ControlType.FONT_COMBOBOX;
                 return new ComboBoxBuilder(setCurrentFont);
             case COLOR_PICKER:
-                return this.colorPickerBuilderSupplier.get();
+                return this.data.getColorPickerBuilderSupplier().get();
             case BUTTON:
                 return new FxButtonBuilder();
             case TOGGLE_BUTTON:
