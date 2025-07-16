@@ -23,7 +23,7 @@ import javafx.scene.paint.Color;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class ColorPickerBuilderAbstract<TColor> implements IControlBuilder<ColorPicker, TColor> {
+public abstract class ColorPickerBuilderAbstract<TColor> extends ControlBuilder<ColorPicker, TColor> {
     private ColorPicker result;
 
     @Override
@@ -90,5 +90,10 @@ public abstract class ColorPickerBuilderAbstract<TColor> implements IControlBuil
         }
 
         this.setDefaultValueToControl(this.result, color);
+    }
+
+    @Override
+    protected ColorPicker getTarget() {
+        return this.result;
     }
 }

@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object> {
+public class ComboBoxBuilder extends ControlBuilder<ComboBox<Object>, Object> {
     private ComboBox<Object> result;
     private EventHandler<ActionEvent> eventHandler;
     private final List<Object> unsupportedItems = new ArrayList<>();
@@ -114,5 +114,10 @@ public class ComboBoxBuilder implements IControlBuilder<ComboBox<Object>, Object
     @Override
     public void setDefaultValue(Object value) {
         this.result.setValue(value);
+    }
+
+    @Override
+    protected ComboBox<Object> getTarget() {
+        return this.result;
     }
 }

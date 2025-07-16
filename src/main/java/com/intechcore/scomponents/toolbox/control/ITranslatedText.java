@@ -16,12 +16,13 @@ public interface ITranslatedText {
     Language DEFAULT_LANGUAGE = Language.ENGLISH;
 
     String getText(Language language);
+
     String getDefaultLangText();
 
     enum Language {
         ENGLISH(0);
 
-        private int index;
+        private final int index;
 
         Language(int index) {
             this.index = index;

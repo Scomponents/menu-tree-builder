@@ -22,23 +22,25 @@ import javafx.scene.control.Skin;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public interface IControlBuilder<TControl extends Control, TResultValue> {
+public interface IControlBuilder<TControl extends Control, TActionResult> {
 
     TControl create(Node icon);
 
     void configureForCommand(AbstractCommand<?> command);
 
-    Supplier<TResultValue> getCommandParameterValueFactory();
+    Supplier<TActionResult> getCommandParameterValueFactory();
 
-    Consumer<TResultValue> getExternalChangeValueConsumer();
+    Consumer<TActionResult> getExternalChangeValueConsumer();
 
     void setOnAction(EventHandler<ActionEvent> value);
 
-    default void actionCancelled(TResultValue commandParameter) { }
+    default void actionCancelled(TActionResult commandParameter) { }
 
-    void setDefaultValue(TResultValue value);
+    void setDefaultValue(TActionResult value);
 
     default Skin<?> createCustomSkin(TControl control, AbstractCommand<?> command) {
         return null;
     }
+
+    IRuntimeHandler getHandler();
 }

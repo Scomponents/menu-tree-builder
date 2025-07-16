@@ -14,6 +14,7 @@ package com.intechcore.scomponents.toolbox;
 
 import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
 import com.intechcore.scomponents.common.core.event.manager.IEventManager;
+import com.intechcore.scomponents.toolbox.command.AbstractCommand;
 import com.intechcore.scomponents.toolbox.command.ICommandFactory;
 import com.intechcore.scomponents.toolbox.command.ICommandGroup;
 import com.intechcore.scomponents.toolbox.command.ICommandInfo;
@@ -21,6 +22,7 @@ import com.intechcore.scomponents.toolbox.command.ToolbarCommandParameter;
 import com.intechcore.scomponents.toolbox.config.IToolboxCommandConfig;
 import com.intechcore.scomponents.toolbox.config.ToggleGroupCommandConfig;
 import com.intechcore.scomponents.toolbox.control.ComboBoxBuilder;
+import com.intechcore.scomponents.toolbox.control.EventTracker;
 import com.intechcore.scomponents.toolbox.control.FxButtonBuilder;
 import com.intechcore.scomponents.toolbox.control.FxToggleButtonBuilder;
 import com.intechcore.scomponents.toolbox.control.IControlBuilder;
@@ -70,7 +72,7 @@ public class MenuItemFactory<TCustomParam> {
 
     private static int callCounter = 0;
 
-    private static final EventHandler<MouseEvent> consumeMouseEventFilter = (MouseEvent mouseEvent) -> {
+    private static final EventHandler<MouseEvent> consumeMouseEventFilterForToggle = (MouseEvent mouseEvent) -> {
         if (((Toggle) mouseEvent.getSource()).isSelected()) {
             mouseEvent.consume();
         }
@@ -86,10 +88,9 @@ public class MenuItemFactory<TCustomParam> {
 
     private int recursiveCallDepth = 0;
 
-
     MenuItemFactory(ICommandFactory<TCustomParam> commandFactory,
-                           CompletableFuture<IEventManager> eventManagerFuture,
-                           MenuItemFactoryBuilder.Data data) {
+                    CompletableFuture<IEventManager> eventManagerFuture,
+                    MenuItemFactoryBuilder.Data data) {
 
         this.commandFactory = commandFactory;
         this.eventManagerFuture = eventManagerFuture;
@@ -115,65 +116,72 @@ public class MenuItemFactory<TCustomParam> {
 
         this.radioButtons.entrySet().forEach(entry -> {
             ICommandGroup<? extends Enum<?>> toggleGroupCommandData = entry.getKey();
-            ToggleGroupData toggleGroupData = entry.getValue();
 
             this.eventManagerFuture.thenCompose(eventManager ->
                     this.commandFactory.createGroupCommand(toggleGroupCommandData).thenAccept(command -> {
-                if (command == null) {
-                    return;
-                }
-
-                if (printShortName) {
-                    toggleGroupData.toggleGroup.getToggles()
-                        .filtered(Control.class::isInstance)
-                        .forEach(node -> this.setLabel((Control) node,
-                            command.getGroupCommandInfo().getShortName((IToolboxCommandConfig) node.getUserData())));
-                }
-
-                boolean[] disableRunCommand = new boolean[]{false};
-
-                toggleGroupData.toggleGroup.selectedToggleProperty().addListener((unusd, previousToggle, newToggle) -> {
-                    if (disableRunCommand[0]) {
-                        return;
-                    }
-
-                    toggleGroupData.toggleGroup.getToggles().forEach(node -> ((Node)node).setDisable(true));
-
-                    IToolboxCommandConfig parameter = (IToolboxCommandConfig) newToggle.getUserData();
-                    ToolbarCommandParameter<TCustomParam> commandParameter = parameter == null ? this.nullParameter :
-                            new ToolbarCommandParameter<TCustomParam>(this.commandFactory.createCommandParameter(), parameter);
-                    command.execute(commandParameter).whenComplete((alsoUnused, throwable) -> {
-                        toggleGroupData.toggleGroup.getToggles().forEach(node -> ((Node)node).setDisable(false));
-                    });
-                });
-                toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast).forEach(node -> {
-                    node.setDisable(false);
-                    node.addEventFilter(MouseEvent.MOUSE_PRESSED, consumeMouseEventFilter);
-                    node.addEventFilter(MouseEvent.MOUSE_RELEASED, consumeMouseEventFilter);
-                    node.addEventFilter(MouseEvent.MOUSE_CLICKED, consumeMouseEventFilter);
-                });
-
-                if (command.getGroupCommandInfo().getChangeValueEventClass() != null) {
-                    eventManager.subscribe(command.getGroupCommandInfo().getChangeValueEventClass(), event -> {
-                        disableRunCommand[0] = true;
-                        toggleGroupData.toggleGroup.getToggles().stream()
-                                .map(ToggleButton.class::cast)
-                                .filter(node -> node.getUserData().equals(
-                                        command.getGroupCommandInfo().eventToCommandType(event, event.getClass())))
-                                .forEach(node -> node.setSelected(true));
-                        disableRunCommand[0] = false;
-                    });
-                }
-
-                this.setDisableEvent(toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast),
-                        command.getGroupCommandInfo().getDisableEventClass());
-                setTooltip(toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast),
-                        command.getGroupCommandInfo());
-            }));
+                        this.handleToggleGroupCommandAction(command, entry.getValue(), eventManager, printShortName);
+                    }));
         });
 
         callCounter++;
         return result;
+    }
+
+    private void handleToggleGroupCommandAction(
+            final AbstractCommand<TCustomParam> command,
+            final ToggleGroupData toggleGroupData,
+            final IEventManager eventManager,
+            final boolean printShortName) {
+        if (command == null) {
+            return;
+        }
+
+        if (printShortName) {
+            toggleGroupData.toggleGroup.getToggles()
+                    .filtered(Control.class::isInstance)
+                    .forEach(node -> setLabel((Control) node,
+                            command.getGroupCommandInfo().getShortName((IToolboxCommandConfig) node.getUserData())));
+        }
+
+        boolean[] disableRunCommand = new boolean[] { false };
+
+        toggleGroupData.toggleGroup.selectedToggleProperty().addListener((unusd, previousToggle, newToggle) -> {
+            if (disableRunCommand[0]) {
+                return;
+            }
+
+            toggleGroupData.toggleGroup.getToggles().forEach(node -> ((Node)node).setDisable(true));
+
+            IToolboxCommandConfig parameter = (IToolboxCommandConfig) newToggle.getUserData();
+            ToolbarCommandParameter<TCustomParam> commandParameter = parameter == null ? this.nullParameter :
+                    new ToolbarCommandParameter<TCustomParam>(this.commandFactory.createCommandParameter(), parameter);
+            command.execute(commandParameter).whenComplete((alsoUnused, throwable) -> {
+                toggleGroupData.toggleGroup.getToggles().forEach(node -> ((Node)node).setDisable(false));
+            });
+        });
+        toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast).forEach(node -> {
+            node.setDisable(false);
+            node.addEventFilter(MouseEvent.MOUSE_PRESSED, consumeMouseEventFilterForToggle);
+            node.addEventFilter(MouseEvent.MOUSE_RELEASED, consumeMouseEventFilterForToggle);
+            node.addEventFilter(MouseEvent.MOUSE_CLICKED, consumeMouseEventFilterForToggle);
+        });
+
+        if (command.getGroupCommandInfo().getChangeValueEventClass() != null) {
+            eventManager.subscribe(command.getGroupCommandInfo().getChangeValueEventClass(), event -> {
+                disableRunCommand[0] = true;
+                toggleGroupData.toggleGroup.getToggles().stream()
+                        .map(ToggleButton.class::cast)
+                        .filter(node -> node.getUserData().equals(
+                                command.getGroupCommandInfo().eventToCommandType(event, event.getClass())))
+                        .forEach(node -> node.setSelected(true));
+                disableRunCommand[0] = false;
+            });
+        }
+
+        this.setDisableEvent(toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast),
+                command.getGroupCommandInfo().getDisableEventClass());
+        setTooltip(toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast),
+                command.getGroupCommandInfo());
     }
 
     public List<Node> createMenuItems(Stream<IToolboxCommandConfig> source) {
@@ -300,80 +308,96 @@ public class MenuItemFactory<TCustomParam> {
         });
     }
 
-    private void setCommand(final Control resultControl, final IControlBuilder<? extends Control, ?> controlFactory,
-                            final IToolboxCommandConfig data, boolean printShortNameAnyway) {
+    private void setCommand(final Control resultControl,
+                            final IControlBuilder<? extends Control, ?> controlFactory,
+                            final IToolboxCommandConfig commandConfig,
+                            final boolean printShortNameAnyway) {
 
-        final Supplier<?> commandValueFactory = controlFactory.getCommandParameterValueFactory();
-        final Consumer<Object> newValueConsumer = (Consumer<Object>) controlFactory.getExternalChangeValueConsumer();
-        this.eventManagerFuture.thenCompose(eventManager -> this.commandFactory.create(data)
-                .thenAcceptAsync(command -> {
-            if (command == null) {
-                return;
-            }
-
-            controlFactory.configureForCommand(command);
-
-            if (printShortNameAnyway) {
-                this.setLabel(resultControl, command.getCommandInfo().getShortName());
-            }
-
-            controlFactory.setOnAction(event -> {
-                resultControl.setDisable(true);
-
-                Object parameter = commandValueFactory.get();
-                ToolbarCommandParameter<TCustomParam> commandParameter = parameter == null
-                        ? this.nullParameter
-                        : new ToolbarCommandParameter<TCustomParam>(
-                                this.commandFactory.createCommandParameter(), parameter);
-
-                command.execute(commandParameter).whenCompleteAsync((unused, throwable) -> {
-                    resultControl.setDisable(false);
-                    if (throwable != null && throwable.getCause() != null) {
-
-                        StringWriter sw = new StringWriter();
-                        PrintWriter pw = new PrintWriter(sw);
-                        throwable.printStackTrace(pw);
-
-                        Alert alert = new Alert(Alert.AlertType.ERROR, throwable.getMessage(), ButtonType.CLOSE);
-                        if (this.data.getParentWindow() != null) {
-                            alert.initOwner(this.data.getParentWindow());
-                        }
-                        TextArea textArea = new TextArea(sw.toString());
-                        textArea.setEditable(false);
-                        alert.getDialogPane().setExpandableContent(textArea);
-                        alert.setResizable(true);
-                        alert.showAndWait();
+        this.eventManagerFuture.thenCompose(eventManager ->
+                this.commandFactory.create(commandConfig).thenAcceptAsync(command -> {
+                    if (command == null) {
+                        return;
                     }
 
-                    if (commandParameter.isCancelled()) {
-                        ((IControlBuilder<? extends Control, Object>) controlFactory)
-                                .actionCancelled(commandParameter.getResult());
+                    controlFactory.configureForCommand(command);
+
+                    if (printShortNameAnyway) {
+                        setLabel(resultControl, command.getCommandInfo().getShortName());
                     }
-                }, Platform::runLater);
-            });
 
-            if (command.getCommandInfo().getChangeValueEventClass() != null) {
-                eventManager.subscribe(
-                    command.getCommandInfo().getChangeValueEventClass(),
-                    event -> newValueConsumer.accept(event.getNewValue()));
-            }
+                    controlFactory.setOnAction(event -> {
+                        this.handleCommandAction(command, resultControl, controlFactory);
+                    });
 
-            this.setDisableEvent(resultControl, command.getCommandInfo().getDisableEventClass());
-            setTooltip(resultControl, command.getCommandInfo().getFullName());
+                    if (command.getCommandInfo().getChangeValueEventClass() != null) {
+                        final Consumer<Object> newValueConsumer =
+                                (Consumer<Object>) controlFactory.getExternalChangeValueConsumer();
+                        eventManager.subscribe(
+                                command.getCommandInfo().getChangeValueEventClass(),
+                                event -> newValueConsumer.accept(event.getNewValue()));
+                    }
 
-            if (!command.initiallyDisabled()) {
-                resultControl.setDisable(false);
-            }
+                    this.setDisableEvent(null, controlFactory, command.getCommandInfo().getDisableEventClass());
+                    setTooltip(resultControl, command.getCommandInfo().getFullName());
 
-            Object defaultValue = command.getCommandInfo().getDefaultValue();
-            if (defaultValue != null) {
-                 ((IControlBuilder<? extends Control, Object>) controlFactory).setDefaultValue(defaultValue);
-            }
+                    if (!command.initiallyDisabled()) {
+                        resultControl.setDisable(false);
+                    }
 
-        }, Platform::runLater));
+                    Object defaultValue = command.getCommandInfo().getDefaultValue();
+                    if (defaultValue != null) {
+                        ((IControlBuilder<? extends Control, Object>) controlFactory).setDefaultValue(defaultValue);
+                    }
+
+                }, Platform::runLater));
     }
 
-    private void setLabel(Control result, ITranslatedText text) {
+    private void handleCommandAction(
+            final AbstractCommand<TCustomParam> command,
+            final Control resultControl,
+            final IControlBuilder<? extends Control, ?> controlFactory) {
+        resultControl.setDisable(true);
+
+        final Supplier<?> commandValueFactory = controlFactory.getCommandParameterValueFactory();
+        Object parameter = commandValueFactory.get();
+        ToolbarCommandParameter<TCustomParam> commandParameter = parameter == null
+                ? this.nullParameter
+                : new ToolbarCommandParameter<TCustomParam>(
+                this.commandFactory.createCommandParameter(), parameter);
+
+        controlFactory.getHandler().startTracking();
+        command.execute(commandParameter).whenCompleteAsync((unused, throwable) -> {
+            int disabledCallsCount = controlFactory.getHandler().getTrackAndReset(EventTracker.Event.DISABLE);
+            boolean disabledWasCalls = disabledCallsCount != EventTracker.TRACKER_NOT_STARTED_VAL
+                    && disabledCallsCount > 0;
+            if (!disabledWasCalls) {
+                controlFactory.getHandler().setDisable(false);
+            }
+            if (throwable != null && throwable.getCause() != null) {
+
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                throwable.printStackTrace(pw);
+
+                Alert alert = new Alert(Alert.AlertType.ERROR, throwable.getMessage(), ButtonType.CLOSE);
+                if (this.data.getParentWindow() != null) {
+                    alert.initOwner(this.data.getParentWindow());
+                }
+                TextArea textArea = new TextArea(sw.toString());
+                textArea.setEditable(false);
+                alert.getDialogPane().setExpandableContent(textArea);
+                alert.setResizable(true);
+                alert.showAndWait();
+            }
+
+            if (commandParameter.isCancelled()) {
+                ((IControlBuilder<? extends Control, Object>) controlFactory)
+                        .actionCancelled(commandParameter.getResult());
+            }
+        }, Platform::runLater);
+    }
+
+    private static void setLabel(Control result, ITranslatedText text) {
         if (!(result instanceof Labeled)) {
             return;
         }
@@ -405,16 +429,25 @@ public class MenuItemFactory<TCustomParam> {
     }
 
     private void setDisableEvent(Stream<Node> result, Class<? extends DisabledStateEvent> disableEventClass) {
-        result.forEach(node -> this.setDisableEvent(node, disableEventClass));
+        result.forEach(node -> this.setDisableEvent(node, null, disableEventClass));
     }
 
-    private void setDisableEvent(Node result, Class<? extends DisabledStateEvent> disableEventClass) {
+    private void setDisableEvent(Node result,
+                                 IControlBuilder<? extends Control, ?> controlFactory,
+                                 Class<? extends DisabledStateEvent> disableEventClass) {
         if (disableEventClass == null) {
             return;
         }
 
         this.eventManagerFuture.thenAccept(eventManager -> eventManager.subscribe(disableEventClass,
-                eventData -> result.setDisable(eventData.getDisabled())));
+                eventData -> {
+                    if (result != null) {
+                        result.setDisable(eventData.getDisabled());
+                    }
+                    if (controlFactory != null) {
+                        controlFactory.getHandler().setDisable(eventData.getDisabled());
+                    }
+                }));
     }
 
     private static void setTooltip(Stream<Control> result,

@@ -22,7 +22,7 @@ import javafx.scene.control.ButtonBase;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class FxButtonBuilder implements IControlBuilder<ButtonBase, Object> {
+public class FxButtonBuilder extends ControlBuilder<ButtonBase, Object> {
     protected ButtonBase result;
     protected boolean iconIsNull;
 
@@ -66,5 +66,10 @@ public class FxButtonBuilder implements IControlBuilder<ButtonBase, Object> {
 
     @Override
     public void setDefaultValue(Object o) {
+    }
+
+    @Override
+    protected ButtonBase getTarget() {
+        return this.result;
     }
 }

@@ -6,7 +6,7 @@
 
     <artifactId>toolbox</artifactId>
     <groupId>com.intechcore.scomponents</groupId>
-    <version>1.3.0-java${javaVersion}</version>
+    <version>1.3.1-java${javaVersion}</version>
 
     <organization>
         <name>Intechcore GmbH</name>
