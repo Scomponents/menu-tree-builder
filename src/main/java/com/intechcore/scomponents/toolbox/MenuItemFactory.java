@@ -17,16 +17,13 @@ import com.intechcore.scomponents.common.core.event.manager.IEventManager;
 import com.intechcore.scomponents.toolbox.command.AbstractCommand;
 import com.intechcore.scomponents.toolbox.command.ICommandFactory;
 import com.intechcore.scomponents.toolbox.command.ICommandGroup;
-import com.intechcore.scomponents.toolbox.command.ICommandInfo;
 import com.intechcore.scomponents.toolbox.command.ToolbarCommandParameter;
+import com.intechcore.scomponents.toolbox.common.Utils;
 import com.intechcore.scomponents.toolbox.config.IToolboxCommandConfig;
-import com.intechcore.scomponents.toolbox.config.ToggleGroupCommandConfig;
 import com.intechcore.scomponents.toolbox.control.ComboBoxBuilder;
-import com.intechcore.scomponents.toolbox.control.EventTracker;
 import com.intechcore.scomponents.toolbox.control.FxButtonBuilder;
 import com.intechcore.scomponents.toolbox.control.FxToggleButtonBuilder;
 import com.intechcore.scomponents.toolbox.control.IControlBuilder;
-import com.intechcore.scomponents.toolbox.control.ITranslatedText;
 import com.intechcore.scomponents.toolbox.control.icon.IIcon;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -35,28 +32,20 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -64,13 +53,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class MenuItemFactory<TCustomParam> {
-    private static final String MENU_BUTTON_ID_COUNTER_VAR_TEMPLATE = "{%_COUNTER_%}";
-    private static final String MENU_BUTTON_ID_START_VALUE = "ITC_TOOLBOX" + MENU_BUTTON_ID_COUNTER_VAR_TEMPLATE
-            + "_BUTTON_";
 
     private static final Insets SEPARATOR_HORIZONTAL_PADDING = new Insets(0, 0, 0, 3);
 
-    private static int callCounter = 0;
+    private static int buildsCounter = 0;
 
     private static final EventHandler<MouseEvent> consumeMouseEventFilterForToggle = (MouseEvent mouseEvent) -> {
         if (((Toggle) mouseEvent.getSource()).isSelected()) {
@@ -94,7 +80,7 @@ public class MenuItemFactory<TCustomParam> {
 
         this.commandFactory = commandFactory;
         this.eventManagerFuture = eventManagerFuture;
-        this.nullParameter = new ToolbarCommandParameter<TCustomParam>(this.commandFactory.createCommandParameter(), null);
+        this.nullParameter = new ToolbarCommandParameter<>(this.commandFactory.createCommandParameter(), null);
         this.data = data;
     }
 
@@ -123,7 +109,7 @@ public class MenuItemFactory<TCustomParam> {
                     }));
         });
 
-        callCounter++;
+        buildsCounter++;
         return result;
     }
 
@@ -139,7 +125,7 @@ public class MenuItemFactory<TCustomParam> {
         if (printShortName) {
             toggleGroupData.toggleGroup.getToggles()
                     .filtered(Control.class::isInstance)
-                    .forEach(node -> setLabel((Control) node,
+                    .forEach(node -> Utils.setLabel((Control) node,
                             command.getGroupCommandInfo().getShortName((IToolboxCommandConfig) node.getUserData())));
         }
 
@@ -180,7 +166,7 @@ public class MenuItemFactory<TCustomParam> {
 
         this.setDisableEvent(toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast),
                 command.getGroupCommandInfo().getDisableEventClass());
-        setTooltip(toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast),
+        Utils.setTooltip(toggleGroupData.toggleGroup.getToggles().stream().map(ToggleButton.class::cast),
                 command.getGroupCommandInfo());
     }
 
@@ -203,7 +189,7 @@ public class MenuItemFactory<TCustomParam> {
 
         final IControlBuilder<? extends Control, ?> controlFactory = this.getControlFactory(data.getControlType());
         final Control resultControl = controlFactory.create(this.getIcon(data.getIcon()));
-        setId(resultControl, data);
+        Utils.setId(resultControl, data, buildsCounter);
         resultControl.setDisable(true);
 
         if (this.recursiveCallDepth >= 1 && resultControl instanceof ComboBox) {
@@ -222,20 +208,6 @@ public class MenuItemFactory<TCustomParam> {
         this.setCommand(resultControl, controlFactory, data, printShortName);
 
         return resultControl;
-    }
-
-    private static void setId(Node target, IToolboxCommandConfig commandConfig) {
-        String start = MENU_BUTTON_ID_START_VALUE;
-        String counterValue = "";
-        if (callCounter > 0) {
-            counterValue = String.valueOf(callCounter + 1);
-        }
-        start = start.replace(MENU_BUTTON_ID_COUNTER_VAR_TEMPLATE, counterValue);
-
-        String end = commandConfig.getControlType() == IToolboxCommandConfig.ControlType.SUBMENU
-                ? "_SUBMENU" : "";
-
-        target.setId(start + commandConfig.toString().toUpperCase(Locale.ROOT) + end);
     }
 
     private boolean isHorizontalDirection() {
@@ -261,7 +233,7 @@ public class MenuItemFactory<TCustomParam> {
         Node icon = this.getIcon(data.getIcon());
 
         MenuButton submenuButton = new MenuButton(icon != null ? "": data.toString(), icon, subPanel);
-        setId(submenuButton, data);
+        Utils.setId(submenuButton, data, buildsCounter);
         submenuButton.setStyle("-fx-accent: transparent; -fx-selection-bar: transparent;");
         submenuButton.setPopupSide(verticalDirection ? Side.BOTTOM : Side.RIGHT);
         if (this.recursiveCallDepth > 1) {
@@ -280,7 +252,7 @@ public class MenuItemFactory<TCustomParam> {
             submenuButton.setPadding(submenuInsets);
         }
 
-        setTooltip(submenuButton, this.commandFactory.createTooltip(data));
+        Utils.setTooltip(submenuButton, this.commandFactory.createTooltip(data));
 
         this.recursiveCallDepth--;
         return submenuButton;
@@ -322,7 +294,7 @@ public class MenuItemFactory<TCustomParam> {
                     controlFactory.configureForCommand(command);
 
                     if (printShortNameAnyway) {
-                        setLabel(resultControl, command.getCommandInfo().getShortName());
+                        Utils.setLabel(resultControl, command.getCommandInfo().getShortName());
                     }
 
                     controlFactory.setOnAction(event -> {
@@ -338,7 +310,7 @@ public class MenuItemFactory<TCustomParam> {
                     }
 
                     this.setDisableEvent(null, controlFactory, command.getCommandInfo().getDisableEventClass());
-                    setTooltip(resultControl, command.getCommandInfo().getFullName());
+                    Utils.setTooltip(resultControl, command.getCommandInfo().getFullName());
 
                     if (!command.initiallyDisabled()) {
                         resultControl.setDisable(false);
@@ -363,50 +335,27 @@ public class MenuItemFactory<TCustomParam> {
         ToolbarCommandParameter<TCustomParam> commandParameter = parameter == null
                 ? this.nullParameter
                 : new ToolbarCommandParameter<TCustomParam>(
-                this.commandFactory.createCommandParameter(), parameter);
+                        this.commandFactory.createCommandParameter(), parameter);
 
         controlFactory.getHandler().startTracking();
-        command.execute(commandParameter).whenCompleteAsync((unused, throwable) -> {
-            int disabledCallsCount = controlFactory.getHandler().getTrackAndReset(EventTracker.Event.DISABLE);
-            boolean disabledWasCalls = disabledCallsCount != EventTracker.TRACKER_NOT_STARTED_VAL
-                    && disabledCallsCount > 0;
-            if (!disabledWasCalls) {
-                controlFactory.getHandler().setDisable(false);
-            }
-            if (throwable != null && throwable.getCause() != null) {
 
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                throwable.printStackTrace(pw);
+        Consumer<Throwable> finishCommand = throwable -> Utils.finishCommand(
+                throwable,
+                (IControlBuilder<? extends Control, Object>) controlFactory,
+                commandParameter,
+                this.data.getParentWindow());
 
-                Alert alert = new Alert(Alert.AlertType.ERROR, throwable.getMessage(), ButtonType.CLOSE);
-                if (this.data.getParentWindow() != null) {
-                    alert.initOwner(this.data.getParentWindow());
-                }
-                TextArea textArea = new TextArea(sw.toString());
-                textArea.setEditable(false);
-                alert.getDialogPane().setExpandableContent(textArea);
-                alert.setResizable(true);
-                alert.showAndWait();
-            }
-
-            if (commandParameter.isCancelled()) {
-                ((IControlBuilder<? extends Control, Object>) controlFactory)
-                        .actionCancelled(commandParameter.getResult());
-            }
-        }, Platform::runLater);
-    }
-
-    private static void setLabel(Control result, ITranslatedText text) {
-        if (!(result instanceof Labeled)) {
-            return;
+        CompletableFuture<Void> commandFuture = null;
+        try {
+            commandFuture = command.execute(commandParameter);
+        } catch (Exception e) {
+            Platform.runLater(() -> finishCommand.accept(e));
         }
 
-        Labeled labeledControl = (Labeled) result;
-
-        String existingLabel = labeledControl.getText();
-        if (existingLabel == null || "".equals(existingLabel)) {
-            labeledControl.setText(text.getDefaultLangText());
+        if (commandFuture != null) {
+            commandFuture.whenCompleteAsync((unused, throwable) -> {
+                finishCommand.accept(throwable);
+            }, Platform::runLater);
         }
     }
 
@@ -448,21 +397,6 @@ public class MenuItemFactory<TCustomParam> {
                         controlFactory.getHandler().setDisable(eventData.getDisabled());
                     }
                 }));
-    }
-
-    private static void setTooltip(Stream<Control> result,
-                                   ToggleGroupCommandConfig<?, ? extends ICommandInfo> commandData) {
-        if (commandData == null) {
-            return;
-        }
-
-        result.forEach(node -> setTooltip(node, commandData.getFullName((IToolboxCommandConfig) node.getUserData())));
-    }
-
-    private static void setTooltip(Control result, ITranslatedText text) {
-        if (text != null && !text.getDefaultLangText().isEmpty()) {
-            result.setTooltip(new Tooltip(text.getDefaultLangText()));
-        }
     }
 
     private static class ToggleGroupData {
