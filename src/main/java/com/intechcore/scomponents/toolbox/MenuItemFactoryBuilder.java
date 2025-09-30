@@ -21,7 +21,7 @@ public class MenuItemFactoryBuilder {
 
     private final CompletableFuture<IEventManager> eventManagerFuture;
 
-    private final Data data = new Data();
+    private final Settings settings = new Settings();
 
     public MenuItemFactoryBuilder(CompletableFuture<IEventManager> eventManagerFuture) {
         this.eventManagerFuture = eventManagerFuture;
@@ -34,39 +34,63 @@ public class MenuItemFactoryBuilder {
         MenuItemFactory<TCommandParam> menuItemFactory = new MenuItemFactory<>(
                 commandFactory,
                 this.eventManagerFuture,
-                this.data);
+                this.settings);
 
         return menuItemFactory.createMenuItems(source);
     }
 
     public MenuItemFactoryBuilder setColorPickerBuilder(Supplier<ColorPickerBuilderAbstract<?>> value) {
-        this.data.colorPickerBuilderSupplier = value;
+        this.settings.colorPickerBuilderSupplier = value;
         return this;
     }
 
     public MenuItemFactoryBuilder setOpenSubmenuOnHover(boolean value) {
-        this.data.openSubmenuOnHover = value;
+        this.settings.openSubmenuOnHover = value;
+        return this;
+    }
+
+    public MenuItemFactoryBuilder setShortLabel(boolean value) {
+        this.settings.setShortLabel = value;
+        return this;
+    }
+
+    public MenuItemFactoryBuilder setItemIdCounter(int value) {
+        this.settings.resultItemsIdCounter = value;
+        return this;
+    }
+
+    public MenuItemFactoryBuilder setSubmenuCssStyle(String value) {
+        this.settings.submenuButtonStyle = value;
+        return this;
+    }
+
+    public MenuItemFactoryBuilder setHideSubmenuOnClick(boolean value) {
+        this.settings.hideSubmenuOnClick = value;
         return this;
     }
 
     public MenuItemFactoryBuilder setIconScaleFactor(double value) {
-        this.data.iconScaleFactor = value;
+        this.settings.iconScaleFactor = value;
         return this;
     }
 
     public MenuItemFactoryBuilder setIconMapper(IIconBuildMapper value) {
-        this.data.iconMapper = value;
+        this.settings.iconMapper = value;
         return this;
     }
 
     public MenuItemFactoryBuilder setParentWindow(Window value) {
-        this.data.parentWindow = value;
+        this.settings.parentWindow = value;
         return this;
     }
 
-    static class Data {
+    static class Settings {
         private Supplier<ColorPickerBuilderAbstract<?>> colorPickerBuilderSupplier;
-        private boolean openSubmenuOnHover;
+        private boolean openSubmenuOnHover = false;
+        private boolean hideSubmenuOnClick = true;
+        private boolean setShortLabel;
+        private int resultItemsIdCounter = 0;
+        private String submenuButtonStyle = "-fx-accent: transparent; -fx-selection-bar: transparent;";
         private Double iconScaleFactor;
         private IIconBuildMapper iconMapper;
         private Window parentWindow;
@@ -79,6 +103,22 @@ public class MenuItemFactoryBuilder {
 
         public boolean isOpenSubmenuOnHover() {
             return this.openSubmenuOnHover;
+        }
+
+        public boolean isSetShortLabel() {
+            return this.setShortLabel;
+        }
+
+        public int getResultItemsIdCounter() {
+            return this.resultItemsIdCounter;
+        }
+
+        public String getSubmenuButtonStyle() {
+            return this.submenuButtonStyle;
+        }
+
+        public boolean isHideSubmenuOnClick() {
+            return this.hideSubmenuOnClick;
         }
 
         public Double getIconScaleFactor() {

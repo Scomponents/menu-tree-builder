@@ -37,7 +37,7 @@ public class SvgFileIconBuilder implements IIconBuilder {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         TranscoderInput input = new TranscoderInput(
-                getInputStream(this.resourceParentFolderName + svgFileName));
+                this.getInputStream(this.resourceParentFolderName + svgFileName));
         TranscoderOutput output = new TranscoderOutput(bos);
         PNGTranscoder converter = new PNGTranscoder();
 

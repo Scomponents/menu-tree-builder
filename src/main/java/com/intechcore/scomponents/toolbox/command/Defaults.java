@@ -6,9 +6,7 @@ import com.intechcore.scomponents.toolbox.control.icon.IIcon;
 import java.util.stream.Stream;
 
 public enum Defaults implements IToolboxCommandConfig {
-    SEPARATOR
-
-    ;
+    SEPARATOR;
 
     @Override
     public IIcon getIcon() {

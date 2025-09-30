@@ -19,7 +19,11 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ICommandFactory<TCommandParam> {
     CompletableFuture<AbstractCommand<TCommandParam>> create(IToolboxCommandConfig commandType);
-    CompletableFuture<AbstractCommand<TCommandParam>> createGroupCommand(ICommandGroup<?> config);
-    ITranslatedText createTooltip(IToolboxCommandConfig commandType);
     TCommandParam createCommandParameter();
+    default CompletableFuture<AbstractCommand<TCommandParam>> createGroupCommand(ICommandGroup<?> config) {
+        return null;
+    }
+    default ITranslatedText createTooltip(IToolboxCommandConfig commandType) {
+        return null;
+    }
 }

@@ -6,7 +6,7 @@
 
     <artifactId>toolbox</artifactId>
     <groupId>com.intechcore.scomponents</groupId>
-    <version>1.3.2-java${javaVersion}</version>
+    <version>1.4.0-java${javaVersion}</version>
 
     <organization>
         <name>Intechcore GmbH</name>
@@ -16,8 +16,8 @@
     <properties>
         <javaVersion>11</javaVersion>
         <javaVersionForLibs>-java${javaVersion}</javaVersionForLibs>
-        <common-core.version>1.0.2</common-core.version>
-        <batik.version>1.17</batik.version>
+        <common-core.version>1.1.0</common-core.version>
+        <batik.version>1.19</batik.version>
         <maven.compiler.source>${javaVersion}</maven.compiler.source>
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
         <itcReleasesId>scomponents-releases-scell</itcReleasesId>
@@ -29,6 +29,12 @@
             <id>${itcReleasesId}</id>
             <url>${itcReleasesUrl}</url>
         </repository>
+        <!--
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        -->
     </repositories>
 
     <distributionManagement>
@@ -38,6 +44,18 @@
         </repository>
     </distributionManagement>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.13.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.intechcore.scomponents</groupId>
@@ -45,9 +63,27 @@
             <version>${common-core.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-all</artifactId>
             <version>${batik.version}</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>com.github.hervegirod</groupId>
+            <artifactId>fxsvgimage</artifactId>
+            <version>1.4</version>
+            <optional>true</optional>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -14,6 +14,7 @@ package com.intechcore.scomponents.toolbox.command;
 
 import com.intechcore.scomponents.toolbox.config.CommandUiData;
 
+@FunctionalInterface
 public interface ICommandInfo {
     CommandUiData getData();
 }

@@ -20,8 +20,12 @@ import java.util.stream.Stream;
 public interface IToolboxCommandConfig {
     IIcon getIcon();
     ControlType getControlType();
-    Stream<IToolboxCommandConfig> getNestedCommands();
-    <TCommandGroup extends Enum<TCommandGroup>> ICommandGroup<TCommandGroup> getToggleGroup();
+    default Stream<IToolboxCommandConfig> getNestedCommands() {
+        return Stream.empty();
+    }
+    default <TCommandGroup extends Enum<TCommandGroup>> ICommandGroup<TCommandGroup> getToggleGroup() {
+        return null;
+    }
 
     enum ControlType {
         BUTTON,

@@ -33,6 +33,7 @@ import com.intechcore.scomponents.toolbox.control.ITranslatedText;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public final class Utils {
@@ -62,15 +63,16 @@ public final class Utils {
             Throwable throwable,
             IControlBuilder<? extends Control, Object> controlFactory,
             ICommandParameter<TCustomParam> commandParameter,
+            final Consumer<Boolean> disableConsumer,
             Window parentWindow) {
         int disabledCallsCount = controlFactory.getHandler().getTrackAndReset(EventTracker.Event.DISABLE);
         boolean disabledWasCalls = disabledCallsCount != EventTracker.TRACKER_NOT_STARTED_VAL
                 && disabledCallsCount > 0;
         if (!disabledWasCalls) {
-            controlFactory.getHandler().setDisable(false);
+            disableConsumer.accept(false);
         }
         if (throwable != null) {
-            throwable = ExceptionUtils.getFirstCause(throwable);
+            throwable = ExceptionUtils.getRootCause(throwable);
 
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -103,15 +105,6 @@ public final class Utils {
         if (existingLabel == null || "".equals(existingLabel)) {
             labeledControl.setText(text.getDefaultLangText());
         }
-    }
-
-    public static void setTooltip(Stream<Control> result,
-                                  ToggleGroupCommandConfig<?, ? extends ICommandInfo> commandData) {
-        if (commandData == null) {
-            return;
-        }
-
-        result.forEach(node -> setTooltip(node, commandData.getFullName((IToolboxCommandConfig) node.getUserData())));
     }
 
     public static void setTooltip(Control result, ITranslatedText text) {
