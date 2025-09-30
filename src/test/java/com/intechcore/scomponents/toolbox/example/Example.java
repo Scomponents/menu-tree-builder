@@ -69,7 +69,7 @@ public class Example extends Application {
                         )
                 ));
 
-        ToolBar toolBar = new ToolBar(menuButtons.toArray(Node[]::new));
+        ToolBar toolBar = new ToolBar(menuButtons.toArray(new Node[0]));
 
 //        URL url = Example.class.getResource("/icons/paint-roller.svg");
 //        LoaderParameters parameters = LoaderParameters.createWidthParameters(200);

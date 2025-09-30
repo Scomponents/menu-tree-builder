@@ -331,7 +331,7 @@ public class MenuItemFactory<TCustomParam> {
 //                result.setOnMouseExited(event -> submenuButton.hide());
             }
         } else {
-            submenuButton.setOnShown(event -> {
+            submenuButton.addEventHandler(MenuButton.ON_SHOWN, event -> {
                 this.openedSubMenus.clear();
             });
         }
