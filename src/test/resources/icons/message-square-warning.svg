@@ -2,7 +2,7 @@
 Taken from https://lucide.dev/icons/
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-warning-icon lucide-message-square-warning">
-    <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/>
-    <path d="M12 15h.01"/>
-    <path d="M12 7v4"/>
+    <path d="M 22 17 a 2 2 0 0 1 -2 2 H 6.828 a 2 2 0 0 0 -1.414 .586 l -2.202 2.202 A .71 .71 0 0 1 2 21.286 V 5 a 2 2 0 0 1 2 -2 h 16 a 2 2 0 0 1 2 2 z"/>
+    <path d="M 12 15 h 0.2"/>
+    <path d="M 12 7 v 4"/>
 </svg>

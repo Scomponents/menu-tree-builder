@@ -26,7 +26,7 @@ import com.intechcore.scomponents.common.core.event.manager.IEventManager;
 import com.intechcore.scomponents.toolbox.MenuItemFactoryBuilder;
 import com.intechcore.scomponents.toolbox.control.icon.Util;
 import com.intechcore.scomponents.toolbox.example.toolbar.AppState;
-import com.intechcore.scomponents.toolbox.example.toolbar.CommandFactory;
+import com.intechcore.scomponents.toolbox.example.command.CommandFactory;
 import com.intechcore.scomponents.toolbox.example.toolbar.ExampleMenuItem;
 import com.intechcore.scomponents.toolbox.example.toolbar.ExampleSubmenuItem;
 import com.intechcore.scomponents.toolbox.example.toolbar.Icons;

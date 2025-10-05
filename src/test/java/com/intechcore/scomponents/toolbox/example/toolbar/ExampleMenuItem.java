@@ -22,9 +22,9 @@ public enum ExampleMenuItem implements IToolboxCommandConfig {
     ALERT_INFO(Icons.INFO, ControlType.BUTTON),
     ALERT_WARNING(Icons.WARNING, ControlType.BUTTON),
     ALERT_ERROR(Icons.ALERT, ControlType.BUTTON),
-    TOGGLE1_STATE_1(Icons.MENU, ControlType.TOGGLE_BUTTON, ToggleGroup.TOGGLE_GROUP1),
+    TOGGLE1_STATE_1(Icons.SQUARE_PERCENT, ControlType.TOGGLE_BUTTON, ToggleGroup.TOGGLE_GROUP1),
     TOGGLE1_STATE_2(Icons.PAINT_ROLLER, ControlType.TOGGLE_BUTTON, ToggleGroup.TOGGLE_GROUP1),
-    TOGGLE1_STATE_3(Icons.BRICK_WALL, ControlType.TOGGLE_BUTTON, ToggleGroup.TOGGLE_GROUP1),
+    TOGGLE1_STATE_3(Icons.MEGAPHONE, ControlType.TOGGLE_BUTTON, ToggleGroup.TOGGLE_GROUP1),
     ;
 
     private final IIcon icon;
@@ -40,7 +40,6 @@ public enum ExampleMenuItem implements IToolboxCommandConfig {
         this.controlType = controlType;
         this.toggleGroup = toggleGroup;
     }
-
 
     @Override
     public IIcon getIcon() {

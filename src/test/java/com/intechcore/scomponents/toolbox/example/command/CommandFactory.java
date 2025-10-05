@@ -10,7 +10,7 @@
  *  Written by Intechcore GmbH <info@intechcore.com>
  */
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
+package com.intechcore.scomponents.toolbox.example.command;
 
 import javafx.scene.control.Alert;
 import javafx.stage.Window;
@@ -20,6 +20,10 @@ import com.intechcore.scomponents.toolbox.command.CommandFactoryStorage;
 import com.intechcore.scomponents.toolbox.command.ICommandFactory;
 import com.intechcore.scomponents.toolbox.command.ICommandGroup;
 import com.intechcore.scomponents.toolbox.config.IToolboxCommandConfig;
+import com.intechcore.scomponents.toolbox.example.toolbar.AppState;
+import com.intechcore.scomponents.toolbox.example.toolbar.ExampleMenuItem;
+import com.intechcore.scomponents.toolbox.example.toolbar.Text;
+import com.intechcore.scomponents.toolbox.example.toolbar.ToggleGroup;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -46,7 +50,7 @@ public class CommandFactory implements ICommandFactory<AppState> {
         ;
 
         this.factoryStorage
-                .createCompletedGroup(ToggleGroup.TOGGLE_GROUP1, () -> new ToggleOneCommand());
+                .createCompletedGroup(ToggleGroup.TOGGLE_GROUP1, ToggleOneCommand::new);
     }
 
     @Override

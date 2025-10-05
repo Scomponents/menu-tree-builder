@@ -10,7 +10,7 @@
  *  Written by Intechcore GmbH <info@intechcore.com>
  */
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
+package com.intechcore.scomponents.toolbox.example.command;
 
 import com.intechcore.scomponents.toolbox.command.AbstractCommand;
 import com.intechcore.scomponents.toolbox.command.ICommandInfo;
@@ -18,6 +18,9 @@ import com.intechcore.scomponents.toolbox.command.ICommandParameter;
 import com.intechcore.scomponents.toolbox.config.CommandUiData;
 import com.intechcore.scomponents.toolbox.config.IToolboxCommandConfig;
 import com.intechcore.scomponents.toolbox.config.ToggleGroupCommandConfig;
+import com.intechcore.scomponents.toolbox.example.toolbar.AppState;
+import com.intechcore.scomponents.toolbox.example.toolbar.ExampleMenuItem;
+import com.intechcore.scomponents.toolbox.example.toolbar.Text;
 
 import java.util.HashMap;
 import java.util.Map;

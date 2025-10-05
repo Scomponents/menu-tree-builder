@@ -13,23 +13,23 @@
 package com.intechcore.scomponents.toolbox.example.toolbar;
 
 import javafx.scene.Node;
-//import org.girod.javafx.svgimage.SVGLoader;
+import org.girod.javafx.svgimage.SVGLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intechcore.scomponents.toolbox.control.icon.IIconBuilder;
 import com.intechcore.scomponents.toolbox.control.icon.IIconSourceConfig;
 
-//public class HevergirodFxsvqimageSvgIconBuilder implements IIconBuilder {
-//    private static Logger LOG = LoggerFactory.getLogger(HevergirodFxsvqimageSvgIconBuilder.class);
-//
-//    @Override
-//    public Node createIcon(IIconSourceConfig icon) {
-//        try {
-//            return SVGLoader.load(icon.getClass().getResource(icon.getData()[0]));
-//        } catch (Exception e) {
-//            LOG.error("Unable to load SVG \"{}\"", icon.getData()[0], e);
-//        }
-//        return null;
-//    }
-//}
+public class HevergirodFxsvqimageSvgIconBuilder implements IIconBuilder {
+    private static Logger LOG = LoggerFactory.getLogger(HevergirodFxsvqimageSvgIconBuilder.class);
+
+    @Override
+    public Node createIcon(IIconSourceConfig icon) {
+        try {
+            return SVGLoader.load(icon.getClass().getResource(icon.getData()[0]));
+        } catch (Exception e) {
+            LOG.error("Unable to load SVG \"{}\"", icon.getData()[0], e);
+        }
+        return null;
+    }
+}

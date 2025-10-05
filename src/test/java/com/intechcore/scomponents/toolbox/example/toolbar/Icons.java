@@ -23,12 +23,12 @@ public enum Icons implements IIcon, IIconSourceConfig {
     PAINT_ROLLER("paint-roller"),
     INFO("info"),
     WARNING("message-square-warning"),
-    ALERT("message-square-warning"),
+    ALERT("triangle-alert"),
     MEGAPHONE("megaphone"),
     SQUARE_PERCENT("square-percent");
 
     private final String fileName;
-    private final IIconBuilder iconBuilder = null; // new HevergirodFxsvqimageSvgIconBuilder();
+    private final IIconBuilder iconBuilder = new HevergirodFxsvqimageSvgIconBuilder();
 
     Icons(String fileName) {
         this.fileName = fileName;

@@ -10,7 +10,7 @@
  *  Written by Intechcore GmbH <info@intechcore.com>
  */
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
+package com.intechcore.scomponents.toolbox.example.command;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -20,6 +20,8 @@ import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
 import com.intechcore.scomponents.toolbox.command.AbstractCommand;
 import com.intechcore.scomponents.toolbox.command.ICommandParameter;
 import com.intechcore.scomponents.toolbox.config.CommandUiData;
+import com.intechcore.scomponents.toolbox.example.toolbar.AppState;
+import com.intechcore.scomponents.toolbox.example.toolbar.Text;
 
 import java.util.concurrent.CompletableFuture;
 
