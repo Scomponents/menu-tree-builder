@@ -9,24 +9,32 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, a or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
-
-import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+package com.intechcore.scomponents.fx.menubuilder.control;
 
 /**
- * A request to disable a command
+ * A handler for runtime events
  */
-public class DisableStateCommandRequest extends DisabledStateEvent {
+public interface IRuntimeHandler {
     /**
-     * Constructs a new DisableStateCommandRequest
+     * Disables or enables the control
      * @param disabled true to disable, false to enable
      */
-    public DisableStateCommandRequest(Boolean disabled) {
-        super(disabled);
-    }
+    void setDisable(boolean disabled);
+
+    /**
+     * Starts tracking events
+     */
+    void startTracking();
+
+    /**
+     * Gets the count for the given event and resets it
+     * @param event the event to get the count for
+     * @return the count for the given event
+     */
+    int getTrackAndReset(EventTracker.Event event);
 }

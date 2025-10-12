@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
-
-import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+package com.intechcore.scomponents.fx.menubuilder.command;
 
 /**
- * A request to disable a command
+ * A marker interface for a group of toolbox commands
+ * @param <TCustomEnum> the type of the enum that implements this interface
  */
-public class DisableStateCommandRequest extends DisabledStateEvent {
+public interface ICommandGroup<TCustomEnum extends Enum<TCustomEnum>> {
     /**
-     * Constructs a new DisableStateCommandRequest
-     * @param disabled true to disable, false to enable
+     * Casts this instance to the enum type
+     * @return this instance cast to the enum type
      */
-    public DisableStateCommandRequest(Boolean disabled) {
-        super(disabled);
+    default TCustomEnum cast() {
+        return (TCustomEnum)this;
     }
 }

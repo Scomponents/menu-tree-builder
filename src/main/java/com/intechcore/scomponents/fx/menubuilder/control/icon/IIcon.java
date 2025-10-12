@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.intechcore.scomponents.toolbox.example.toolbar;
-
-import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+package com.intechcore.scomponents.fx.menubuilder.control.icon;
 
 /**
- * A request to disable a command
+ * A marker interface for an icon
  */
-public class DisableStateCommandRequest extends DisabledStateEvent {
-    /**
-     * Constructs a new DisableStateCommandRequest
-     * @param disabled true to disable, false to enable
-     */
-    public DisableStateCommandRequest(Boolean disabled) {
-        super(disabled);
-    }
-}
+public interface IIcon { }

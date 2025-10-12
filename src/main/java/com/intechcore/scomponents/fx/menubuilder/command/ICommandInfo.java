@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
+package com.intechcore.scomponents.fx.menubuilder.command;
 
-import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+import com.intechcore.scomponents.fx.menubuilder.config.CommandUiData;
 
 /**
- * A request to disable a command
+ * Represents the UI data for a command
  */
-public class DisableStateCommandRequest extends DisabledStateEvent {
+@FunctionalInterface
+public interface ICommandInfo {
     /**
-     * Constructs a new DisableStateCommandRequest
-     * @param disabled true to disable, false to enable
+     * @return the command UI data
      */
-    public DisableStateCommandRequest(Boolean disabled) {
-        super(disabled);
-    }
+    CommandUiData getData();
 }

@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.intechcore.scomponents.fx.menubuilder.control.icon;
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
-
-import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+import javafx.scene.Node;
 
 /**
- * A request to disable a command
+ * A builder for creating an icon from an SVG path
  */
-public class DisableStateCommandRequest extends DisabledStateEvent {
-    /**
-     * Constructs a new DisableStateCommandRequest
-     * @param disabled true to disable, false to enable
-     */
-    public DisableStateCommandRequest(Boolean disabled) {
-        super(disabled);
+public class SvgPathIconBuilder implements IIconBuilder {
+    @Override
+    public Node createIcon(IIconSourceConfig data) {
+        return SvgIcon.load(data);
     }
 }

@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
-
-import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+package com.intechcore.scomponents.fx.menubuilder.command;
 
 /**
- * A request to disable a command
+ * The source of a command
  */
-public class DisableStateCommandRequest extends DisabledStateEvent {
+public enum CommandSource {
     /**
-     * Constructs a new DisableStateCommandRequest
-     * @param disabled true to disable, false to enable
+     * The command was triggered from a toolbar
      */
-    public DisableStateCommandRequest(Boolean disabled) {
-        super(disabled);
-    }
+    TOOLBAR,
+    /**
+     * The command was triggered from a context menu
+     */
+    CONTEXT_MENU,
+    /**
+     * The command was triggered from a shortcut
+     */
+    SHORTCUT
 }

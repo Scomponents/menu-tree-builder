@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
-
-import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+package com.intechcore.scomponents.fx.menubuilder.control.icon;
 
 /**
- * A request to disable a command
+ * An interface for the source configuration of an icon
  */
-public class DisableStateCommandRequest extends DisabledStateEvent {
+public interface IIconSourceConfig {
     /**
-     * Constructs a new DisableStateCommandRequest
-     * @param disabled true to disable, false to enable
+     * @return the data for the icon
      */
-    public DisableStateCommandRequest(Boolean disabled) {
-        super(disabled);
-    }
+    String[] getData();
+
+    /**
+     * @return the left offset of the icon
+     */
+    double getLeftOffset();
+
+    /**
+     * @return the builder for the icon
+     */
+    IIconBuilder getBuilder();
 }

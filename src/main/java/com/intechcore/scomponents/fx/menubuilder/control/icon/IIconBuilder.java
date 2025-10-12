@@ -1,7 +1,7 @@
 /*
  * Copyright 2008-2025 Intechcore GmbH
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.intechcore.scomponents.fx.menubuilder.control.icon;
 
-package com.intechcore.scomponents.toolbox.example.toolbar;
-
-import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+import javafx.scene.Node;
 
 /**
- * A request to disable a command
+ * An interface for building an icon
  */
-public class DisableStateCommandRequest extends DisabledStateEvent {
+public interface IIconBuilder {
     /**
-     * Constructs a new DisableStateCommandRequest
-     * @param disabled true to disable, false to enable
+     * Creates an icon
+     * @param icon the icon source config
+     * @return the created icon
      */
-    public DisableStateCommandRequest(Boolean disabled) {
-        super(disabled);
-    }
+    Node createIcon(IIconSourceConfig icon);
 }

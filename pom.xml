@@ -4,20 +4,56 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>toolbox</artifactId>
-    <groupId>com.intechcore.scomponents</groupId>
-    <version>1.4.0-java${javaVersion}</version>
+    <artifactId>menu-tree-builder</artifactId>
+    <groupId>com.intechcore.scomponents.fx</groupId>
+<!--    <version>1.5.0-java${javaVersion}</version>-->
+    <version>1.5.0</version>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+
+    <description>JavaFX library for creating dynamic and configurable toolbars and menu items using a command pattern</description>
+    <url>https://github.com/Scomponents/menu-tree-builder</url>
+
+    <scm>
+        <connection>scm:git:git@github.com:Scomponents/menu-tree-builder.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Scomponents/menu-tree-builder.git</developerConnection>
+        <url>https://github.com/Scomponents/menu-tree-builder</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <organization>
         <name>Intechcore GmbH</name>
         <url>https://www.intechcore.com</url>
     </organization>
 
+    <developers>
+        <developer>
+            <name>Gennady Bekasov</name>
+            <email>bekasov.g@gmail.com</email>
+            <organization>Intechcore GmbH</organization>
+            <organizationUrl>https://www.intechcore.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Paul Hayder</name>
+            <email>p.hayder@intechcore.com</email>
+            <organization>Intechcore GmbH</organization>
+            <organizationUrl>https://www.intechcore.com</organizationUrl>
+        </developer>
+    </developers>
+
     <properties>
-        <javaVersion>11</javaVersion>
-        <javaVersionForLibs>-java${javaVersion}</javaVersionForLibs>
+        <javaVersion>8</javaVersion>
         <common-core.version>1.1.0</common-core.version>
         <batik.version>1.19</batik.version>
+        <fxsvgimage.version>1.4</fxsvgimage.version>
         <maven.compiler.source>${javaVersion}</maven.compiler.source>
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
         <itcReleasesId>scomponents-releases-scell</itcReleasesId>
@@ -29,12 +65,10 @@
             <id>${itcReleasesId}</id>
             <url>${itcReleasesUrl}</url>
         </repository>
-        <!--
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        -->
     </repositories>
 
     <distributionManagement>
@@ -75,9 +109,7 @@
         <dependency>
             <groupId>com.github.hervegirod</groupId>
             <artifactId>fxsvgimage</artifactId>
-            <version>1.4</version>
-            <scope>test</scope>
-            <optional>true</optional>
+            <version>${fxsvgimage.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -88,6 +120,26 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.github.hervegirod:fxsvgimage</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -125,10 +177,38 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.12.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.8</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <!--
         <profile>
             <id>BuildOnJava8</id>
             <activation>
@@ -138,6 +218,7 @@
                 <javaVersion>8</javaVersion>
             </properties>
         </profile>
+        -->
         <profile>
             <id>BuildOnJava11</id>
             <activation>
@@ -154,6 +235,28 @@
                     <optional>true</optional>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>mavencenralRelease</id>
+            <properties>
+                <itcReleasesId>central</itcReleasesId>
+                <itcReleasesUrl>https://central.sonatype.com/api/v1/publishing</itcReleasesUrl>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.8.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                            <waitUntil>validated</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

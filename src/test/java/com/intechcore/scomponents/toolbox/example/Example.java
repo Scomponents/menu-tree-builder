@@ -1,13 +1,17 @@
 /*
- *  Copyright (C) 2008-2025 Intechcore GmbH - All Rights Reserved
+ * Copyright 2008-2025 Intechcore GmbH
  *
- *  This file is part of SComponents project
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  Unauthorized copying of this file, via any medium is strictly prohibited
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Proprietary and confidential
- *
- *  Written by Intechcore GmbH <info@intechcore.com>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.intechcore.scomponents.toolbox.example;
@@ -23,8 +27,8 @@ import javafx.stage.Stage;
 
 import com.intechcore.scomponents.common.core.event.manager.EventManager;
 import com.intechcore.scomponents.common.core.event.manager.IEventManager;
-import com.intechcore.scomponents.toolbox.MenuItemFactoryBuilder;
-import com.intechcore.scomponents.toolbox.control.icon.Util;
+import com.intechcore.scomponents.fx.menubuilder.MenuItemFactoryBuilder;
+import com.intechcore.scomponents.fx.menubuilder.control.icon.Util;
 import com.intechcore.scomponents.toolbox.example.toolbar.AppState;
 import com.intechcore.scomponents.toolbox.example.command.CommandFactory;
 import com.intechcore.scomponents.toolbox.example.toolbar.ExampleMenuItem;
@@ -35,7 +39,15 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+/**
+ * An example application that demonstrates how to use the toolbox library
+ */
 public class Example extends Application {
+
+    /**
+     * The main entry point for the application
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -71,15 +83,6 @@ public class Example extends Application {
 
         ToolBar toolBar = new ToolBar(menuButtons.toArray(new Node[0]));
 
-//        URL url = Example.class.getResource("/icons/paint-roller.svg");
-//        LoaderParameters parameters = LoaderParameters.createWidthParameters(200);
-//        LoaderParameters parameters = LoaderParameters.createScaleParameters(3);
-//        parameters.centerImage = true;
-//        parameters.scale = 3;
-
-//        SVGImage ewe = SVGLoader.load(url, parameters);
-//        ewe.setStyle("-fx-color: yellow;");
-//        VBox.setVgrow(ewe, Priority.ALWAYS);
         ToggleButton toggle1 = new ToggleButton("State 1");
         toggle1.setOnAction(actionEvent -> {
             service.setToolFirstEnabled(!service.isToolOneEnabled());
