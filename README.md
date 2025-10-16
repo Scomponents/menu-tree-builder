@@ -1,6 +1,8 @@
 # Intechcore Menu-Tree-Builder
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven-Central](https://img.shields.io/maven-central/v/com.intechcore.scomponents.fx/menu-tree-builder)](https://central.sonatype.com/artifact/com.intechcore.scomponents.fx/menu-tree-builder)
+[![Hits-of-Code](https://hitsofcode.com/github/Scomponents/menu-tree-builder?branch=master)](https://hitsofcode.com/github/Scomponents/menu-tree-builder?branch=master)
 
 A JavaFX library for creating dynamic and configurable toolbars and menu items using a command pattern.
 
