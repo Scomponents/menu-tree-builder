@@ -35,7 +35,7 @@ public final class Util {
     public static <TIconEnum extends Enum<TIconEnum>, TIconConfigEnum extends Enum<TIconConfigEnum>>
     IIconBuildMapper buildDefaultIconMapper(TIconEnum[] enumValues, Class<TIconConfigEnum> enumType) {
 
-        Map<IIcon, IIconSourceConfig> iconMap = new HashMap<>();
+        Map<IIcon, IIconSourceConfig> iconMap = new HashMap<IIcon, IIconSourceConfig>();
 
         if (enumValues == null || enumValues.length == 0) {
             return new DefaultIconBuildMapper(iconMap, new Insets(0, 0, 0, 0));

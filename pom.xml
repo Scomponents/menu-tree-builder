@@ -6,8 +6,7 @@
 
     <artifactId>menu-tree-builder</artifactId>
     <groupId>com.intechcore.scomponents.fx</groupId>
-<!--    <version>1.5.0-java${javaVersion}</version>-->
-    <version>1.5.0</version>
+    <version>1.5.1</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
 
@@ -51,11 +50,12 @@
 
     <properties>
         <javaVersion>8</javaVersion>
-        <common-core.version>1.1.0</common-core.version>
+        <common-core.version>1.2.0</common-core.version>
         <batik.version>1.19</batik.version>
-        <fxsvgimage.version>1.4</fxsvgimage.version>
+        <fxsvgimage.version>1.5</fxsvgimage.version>
         <maven.compiler.source>${javaVersion}</maven.compiler.source>
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <itcReleasesId>scomponents-releases-scell</itcReleasesId>
         <itcReleasesUrl>https://nexus.intechcore.online/repository/maven-scomponents-releases-scell/</itcReleasesUrl>
     </properties>
@@ -122,6 +122,18 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Automatic-Module-Name>com.intechcore.scomponents.fx.menutreebuilder</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.0</version>
                 <executions>
@@ -136,6 +148,20 @@
                                     <include>com.github.hervegirod:fxsvgimage</include>
                                 </includes>
                             </artifactSet>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -163,7 +189,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.5.0</version>
+                <version>1.7.3</version>
                 <executions>
                     <execution>
                         <id>set-variables-in-pom</id>

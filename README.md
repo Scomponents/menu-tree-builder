@@ -3,19 +3,20 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Maven-Central](https://img.shields.io/maven-central/v/com.intechcore.scomponents.fx/menu-tree-builder)](https://central.sonatype.com/artifact/com.intechcore.scomponents.fx/menu-tree-builder)
 [![Hits-of-Code](https://hitsofcode.com/github/Scomponents/menu-tree-builder?branch=master)](https://hitsofcode.com/github/Scomponents/menu-tree-builder?branch=master)
+[![Keep a Changelog](https://img.shields.io/badge/changelog-Keep%20a%20Changelog-%23E05735)](CHANGELOG.md)
 
 A JavaFX library for creating dynamic and configurable toolbars and menu items using a command pattern.
 
 ## Features
 
--   **Declarative UI:** Define toolbar and menu items using enums and builders.
--   **Command Pattern:** Decouple UI components from their actions using a command pattern.
--   **SVG Support:** Use SVG icons for your UI components[^1].
--   **State Management:** Manage the state of your application and reflect it in the UI.
--   **Extensible:** Easily extend the library with your own commands and UI components.
--   **Cross-Java:** Compiled for Java 8 compatible with 11+.
+- **Declarative UI:** Define toolbar and menu items using enums and builders.
+- **Command Pattern:** Decouple UI components from their actions using a command pattern.
+- **SVG Support:** Use SVG icons for your UI components[^1].
+- **State Management:** Manage the state of your application and reflect it in the UI.
+- **Extensible:** Easily extend the library with your own commands and UI components.
+- **Cross-Java:** Compiled for Java 8 compatible with 11+.
 
-[^1]: The [com.github.hervegirod.fxsvgimage](https://github.com/hervegirod/fxsvgimage) is using. This library for now (version 1.4) cannot draw SVG file with missing L or l command after move command, so you can fix the SVG from scratch to success drawing
+[^1]: The [com.github.hervegirod.fxsvgimage](https://github.com/hervegirod/fxsvgimage) is using. This library for now (version 1.5) can fail to draw some svg files, so you can fix the SVG from scratch to success drawing
 
 ## Installation
 
@@ -25,7 +26,7 @@ This project uses Maven for dependency management. To include it in your project
 <dependency>
     <groupId>com.intechcore.scomponents</groupId>
     <artifactId>menu-tree-builder</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
 </dependency>
 ```
 
@@ -155,12 +156,16 @@ public class Example extends Application {
 
 ## Dependencies
 
--   [common-core](https://github.com/Scomponents/java-common-core)
--   [SLF4J](https://www.slf4j.org/)
--   [Apache Batik](https://xmlgraphics.apache.org/batik/)
--   [fxsvgimage](https://github.com/hervegirod/fxsvgimage)
--   [JUnit 5](https://junit.org/junit5/) (for testing)
--   [OpenJFX](https://openjfx.io/)
+- [common-core](https://github.com/Scomponents/java-common-core)
+- [SLF4J](https://www.slf4j.org/)
+- [Apache Batik](https://xmlgraphics.apache.org/batik/)
+- [fxsvgimage](https://github.com/hervegirod/fxsvgimage)
+- [JUnit 5](https://junit.org/junit5/) (for testing)
+- [OpenJFX](https://openjfx.io/)
+
+## History
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
 
 ## License
 
