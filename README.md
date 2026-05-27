@@ -16,7 +16,7 @@ A JavaFX library for creating dynamic and configurable toolbars and menu items u
 - **Extensible:** Easily extend the library with your own commands and UI components.
 - **Cross-Java:** Compiled for Java 8 compatible with 11+.
 
-[^1]: The [com.github.hervegirod.fxsvgimage](https://github.com/hervegirod/fxsvgimage) is using. This library for now (version 1.5) can fail to draw some svg files, so you can fix the SVG from scratch to success drawing
+[^1]: The [com.github.hervegirod.fxsvgimage](https://github.com/hervegirod/fxsvgimage) is using. This library for now (version 1.7.3) can fail to draw some svg files, so you can fix the SVG from scratch to success drawing
 
 ## Installation
 
@@ -26,7 +26,7 @@ This project uses Maven for dependency management. To include it in your project
 <dependency>
     <groupId>com.intechcore.scomponents</groupId>
     <artifactId>menu-tree-builder</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
 </dependency>
 ```
 
