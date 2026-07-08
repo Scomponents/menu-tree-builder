@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package com.intechcore.scomponents.fx.menubuilder.config;
 
 import com.intechcore.scomponents.common.core.event.events.AbstractDataEvent;
 import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
+import com.intechcore.scomponents.common.core.i18n.II18nKey;
 import com.intechcore.scomponents.fx.menubuilder.command.ICommandInfo;
-import com.intechcore.scomponents.fx.menubuilder.control.ITranslatedText;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -88,7 +88,7 @@ public class ToggleGroupCommandConfig<TEventData, TCommandTypeEnum extends IComm
      * @param command the command to get the short name for
      * @return the short name for the given command
      */
-    public ITranslatedText getShortName(IToolboxCommandConfig command) {
+    public II18nKey getShortName(IToolboxCommandConfig command) {
         return this.commandConfigToInfoMap.get(command).getData().getShortName();
     }
 
@@ -96,7 +96,7 @@ public class ToggleGroupCommandConfig<TEventData, TCommandTypeEnum extends IComm
      * @param command the command to get the full name for
      * @return the full name for the given command
      */
-    public ITranslatedText getFullName(IToolboxCommandConfig command) {
+    public II18nKey getFullName(IToolboxCommandConfig command) {
         return this.commandConfigToInfoMap.get(command).getData().getFullName();
     }
 

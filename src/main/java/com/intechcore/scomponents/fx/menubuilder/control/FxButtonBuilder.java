@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.intechcore.scomponents.fx.menubuilder.control;
 
+import com.intechcore.scomponents.common.core.i18n.II18nService;
 import com.intechcore.scomponents.fx.menubuilder.command.AbstractCommand;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +33,11 @@ import java.util.function.Supplier;
 public class FxButtonBuilder extends ControlBuilder<ButtonBase, Object> {
     protected ButtonBase result;
     protected boolean iconIsNull;
+    protected final II18nService i18n;
+
+    public FxButtonBuilder(II18nService i18n) {
+        this.i18n = i18n;
+    }
 
     @Override
     public ButtonBase create(Node icon) {
@@ -51,7 +57,7 @@ public class FxButtonBuilder extends ControlBuilder<ButtonBase, Object> {
     @Override
     public void configureForCommand(AbstractCommand<?> command) {
         if (this.iconIsNull) {
-            String buttonTitle = command.getCommandInfo().getShortName().getDefaultLangText();
+            String buttonTitle = this.i18n.translate(command.getCommandInfo().getShortName());
             this.result.setText(buttonTitle);
         }
     }

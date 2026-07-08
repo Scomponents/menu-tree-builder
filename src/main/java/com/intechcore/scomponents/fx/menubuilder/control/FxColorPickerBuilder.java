@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import javafx.scene.paint.Color;
  * A builder for creating a JavaFX ColorPicker that uses {@link Color} as the color type
  */
 public class FxColorPickerBuilder extends ColorPickerBuilderAbstract<Color> {
+    public FxColorPickerBuilder() {
+    }
     @Override
     protected Color createFxColor(Color source) {
         return source;

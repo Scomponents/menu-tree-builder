@@ -26,7 +26,7 @@ This project uses Maven for dependency management. To include it in your project
 <dependency>
     <groupId>com.intechcore.scomponents</groupId>
     <artifactId>menu-tree-builder</artifactId>
-    <version>1.5.2</version>
+    <version>1.6.0</version>
 </dependency>
 ```
 
@@ -44,6 +44,7 @@ public enum Icons implements IIcon, IIconSourceConfig {
     BRICK_WALL("brick-wall"),
     MENU("menu"),
     // ... other icons
+    ;
 
     private final String fileName;
     private final IIconBuilder iconBuilder = new HevergirodFxsvqimageSvgIconBuilder();

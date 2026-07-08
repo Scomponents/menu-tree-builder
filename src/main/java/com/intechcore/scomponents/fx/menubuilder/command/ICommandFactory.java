@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.intechcore.scomponents.fx.menubuilder.command;
 
+import com.intechcore.scomponents.common.core.i18n.II18nKey;
 import com.intechcore.scomponents.fx.menubuilder.config.IToolboxCommandConfig;
-import com.intechcore.scomponents.fx.menubuilder.control.ITranslatedText;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -50,10 +50,11 @@ public interface ICommandFactory<TCommandParam> {
 
     /**
      * Creates a tooltip for the given command type
+     *
      * @param commandType the command type to create a tooltip for
      * @return the created tooltip
      */
-    default ITranslatedText createTooltip(IToolboxCommandConfig commandType) {
+    default II18nKey createTooltip(IToolboxCommandConfig commandType) {
         return null;
     }
 }

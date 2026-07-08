@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package com.intechcore.scomponents.toolbox.example.toolbar;
 
-import com.intechcore.scomponents.fx.menubuilder.control.ITranslatedText;
+import com.intechcore.scomponents.common.core.i18n.II18nKey;
 
 /**
  * A class that represents a text with a short and a full version
  */
 public class Text {
 
-    private final ITranslatedText shortText;
-    private final ITranslatedText fullText;
+    private final II18nKey shortText;
+    private final II18nKey fullText;
 
     /**
      * Constructs a new Text
@@ -40,52 +40,21 @@ public class Text {
      * @param fullText the full version of the text
      */
     public Text(String shortText, String fullText) {
-        this.shortText = new TranslatedText(shortText);
-        this.fullText = new TranslatedText(fullText);
+        this.shortText = () -> shortText;
+        this.fullText = () -> fullText;
     }
 
     /**
      * @return the short version of the text
      */
-    public ITranslatedText getShortText() {
+    public II18nKey getShortText() {
         return this.shortText;
     }
 
     /**
      * @return the full version of the text
      */
-    public ITranslatedText getFullText() {
+    public II18nKey getFullText() {
         return this.fullText;
-    }
-
-    /**
-     * A simple implementation of {@link ITranslatedText}
-     */
-    public static class TranslatedText implements ITranslatedText {
-        private final String text;
-
-        /**
-         * Constructs a new TranslatedText
-         * @param text the text
-         */
-        public TranslatedText(String text) {
-            this.text = text;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getText(Language language) {
-            return this.text;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getDefaultLangText() {
-            return this.text;
-        }
     }
 }

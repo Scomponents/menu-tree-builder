@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.intechcore.scomponents.fx.menubuilder.config;
 
 import com.intechcore.scomponents.common.core.event.events.AbstractDataEvent;
 import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
-import com.intechcore.scomponents.fx.menubuilder.control.ITranslatedText;
+import com.intechcore.scomponents.common.core.i18n.II18nKey;
 
 /**
  * Represents the UI data for a command
@@ -27,41 +27,42 @@ public class CommandUiData {
     /**
      * The full name of the command
      */
-    public final ITranslatedText fullName;
+    private final II18nKey fullNameKey;
     /**
      * The short name of the command
      */
-    public final ITranslatedText shortName;
+    private final II18nKey shortNameKey;
     /**
      * The event class for changing the value of the command
      */
-    public final Class<? extends AbstractDataEvent<?>> changeValueEventClass;
+    private final Class<? extends AbstractDataEvent<?>> changeValueEventClass;
     /**
      * The event class for disabling the command
      */
-    public final Class<? extends DisabledStateEvent> disableEventClass;
+    private final Class<? extends DisabledStateEvent> disableEventClass;
     /**
      * The default value of the command
      */
-    public final Object defaultValue;
+    private final Object defaultValue;
 
     /**
      * Constructs a new CommandUiData
-     * @param fullName the full name of the command
-     * @param shortName the short name of the command
+     * @param fullNameKey the full name of the command
+     * @param shortNameKey the short name of the command
      * @param changeValueEventClass the event class for changing the value of the command
      * @param disableEventClass the event class for disabling the command
      * @param defaultValue the default value of the command
      */
-    public CommandUiData(ITranslatedText fullName, ITranslatedText shortName,
+    public CommandUiData(II18nKey fullNameKey,
+                         II18nKey shortNameKey,
                          Class<? extends AbstractDataEvent<?>> changeValueEventClass,
                          Class<? extends DisabledStateEvent> disableEventClass,
                          Object defaultValue) {
-        this.fullName = fullName;
-        this.shortName = shortName;
         this.changeValueEventClass = changeValueEventClass;
         this.disableEventClass = disableEventClass;
         this.defaultValue = defaultValue;
+        this.fullNameKey = fullNameKey;
+        this.shortNameKey = shortNameKey;
     }
 
     /**
@@ -71,10 +72,17 @@ public class CommandUiData {
      * @param changeValueEventClass the event class for changing the value of the command
      * @param disableEventClass the event class for disabling the command
      */
-    public CommandUiData(ITranslatedText fullName, ITranslatedText shortName,
+    public CommandUiData(II18nKey fullName,
+                         II18nKey shortName,
                          Class<? extends AbstractDataEvent<?>> changeValueEventClass,
                          Class<? extends DisabledStateEvent> disableEventClass) {
-        this(fullName, shortName, changeValueEventClass, disableEventClass, null);
+        this(
+                fullName,
+                shortName,
+                changeValueEventClass,
+                disableEventClass,
+                null
+        );
     }
 
     /**
@@ -82,7 +90,7 @@ public class CommandUiData {
      * @param fullName the full name of the command
      * @param shortName the short name of the command
      */
-    public CommandUiData(ITranslatedText fullName, ITranslatedText shortName) {
+    public CommandUiData(II18nKey fullName, II18nKey shortName) {
         this(fullName, shortName, null, null);
     }
 
@@ -99,15 +107,15 @@ public class CommandUiData {
     /**
      * @return the full name of the command
      */
-    public ITranslatedText getFullName() {
-        return this.fullName;
+    public II18nKey getFullName() {
+        return this.fullNameKey;
     }
 
     /**
      * @return the short name of the command
      */
-    public ITranslatedText getShortName() {
-        return this.shortName;
+    public II18nKey getShortName() {
+        return this.shortNameKey;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class AlertStateCommand extends AbstractCommand<AppState> {
      */
     public AlertStateCommand(Text headers, Alert.AlertType alertType, Window ownerWindow) {
         super(new CommandUiData(headers.getFullText(), headers.getShortText(), null, DisabledStateEvent.class));
-        this.title = headers.getShortText().getText(null);
+        this.title = headers.getShortText().getI18nKey();
         this.alertType = alertType;
         this.ownerWindow = ownerWindow;
     }

@@ -134,7 +134,7 @@ public class MenuItemFactory<TCustomParam> {
                                     .filtered(Control.class::isInstance)
                                     .forEach(node -> Utils.setLabel(
                                             (Control) node,
-                                            groupInfo.getShortName((IToolboxCommandConfig) node.getUserData()))
+                                            this.settings.getI18n().translate(groupInfo.getShortName((IToolboxCommandConfig) node.getUserData())))
                                     );
                         }
 
@@ -171,7 +171,7 @@ public class MenuItemFactory<TCustomParam> {
                             );
                             Utils.setTooltip(
                                     toggleButton,
-                                    commandData.getFullName((IToolboxCommandConfig) toggleButton.getUserData())
+                                    this.settings.getI18n().translate(commandData.getFullName((IToolboxCommandConfig) toggleButton.getUserData()))
                             );
                         });
 
@@ -359,7 +359,10 @@ public class MenuItemFactory<TCustomParam> {
             submenuButton.setPadding(submenuInsets);
         }
 
-        Utils.setTooltip(submenuButton, this.commandFactory.createTooltip(data));
+        Utils.setTooltip(
+                submenuButton,
+                this.settings.getI18n().translate(this.commandFactory.createTooltip(data))
+        );
 
         return submenuButton;
     }
@@ -392,7 +395,10 @@ public class MenuItemFactory<TCustomParam> {
                     controlFactory.configureForCommand(command);
 
                     if (this.settings.isSetShortLabel()) {
-                        Utils.setLabel(resultControl, command.getCommandInfo().getShortName());
+                        Utils.setLabel(
+                                resultControl,
+                                this.settings.getI18n().translate(command.getCommandInfo().getShortName())
+                        );
                     }
 
                     controlFactory.setOnAction(event -> {
@@ -414,7 +420,10 @@ public class MenuItemFactory<TCustomParam> {
                     }
 
                     this.setDisableEvent(null, controlFactory, command.getCommandInfo().getDisableEventClass());
-                    Utils.setTooltip(resultControl, command.getCommandInfo().getFullName());
+                    Utils.setTooltip(
+                            resultControl,
+                            this.settings.getI18n().translate(command.getCommandInfo().getFullName())
+                    );
 
                     if (!command.initiallyDisabled()) {
                         resultControl.setDisable(false);
@@ -504,9 +513,9 @@ public class MenuItemFactory<TCustomParam> {
             case COLOR_PICKER:
                 return this.settings.getColorPickerBuilderSupplier().get();
             case BUTTON:
-                return new FxButtonBuilder();
+                return new FxButtonBuilder(this.settings.getI18n());
             case TOGGLE_BUTTON:
-                return new FxToggleButtonBuilder();
+                return new FxToggleButtonBuilder(this.settings.getI18n());
 
             default:
                 throw new RuntimeException("The following factory have not implemented: " + controlType);

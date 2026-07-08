@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,15 +63,15 @@ public class ChangeStateCommand extends AbstractCommand<AppState> {
         /**
          * Changes the state of tool one
          */
-        CHANGE_TOOL_ONE(new CommandUiData(new Text.TranslatedText("Tool ONE"), new Text.TranslatedText("Tool One Full"), null, null)),
+        CHANGE_TOOL_ONE(new CommandUiData(() -> "Tool ONE", () -> "Tool One Full", null, null)),
         /**
          * Changes the state of tool two
          */
-        CHANGE_TOOL_TWO(new CommandUiData(new Text.TranslatedText("Tool TWO"), new Text.TranslatedText("Tool Two Full"), null, null)),
+        CHANGE_TOOL_TWO(new CommandUiData(() -> "Tool TWO", () -> "Tool Two Full", null, null)),
         /**
          * Changes the state of tool three
          */
-        CHANGE_TOOL_THREE(new CommandUiData(new Text.TranslatedText("Tool THREE"), new Text.TranslatedText("Tool Three Full"), null, null));
+        CHANGE_TOOL_THREE(new CommandUiData(() -> "Tool THREE", () -> "Tool Three Full", null, null));
 
         /**
          * The UI data for the command

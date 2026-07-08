@@ -12,7 +12,9 @@
 package com.intechcore.scomponents.fx.menubuilder;
 
 import com.intechcore.scomponents.common.core.event.manager.IEventManager;
+import com.intechcore.scomponents.common.core.i18n.II18nService;
 import com.intechcore.scomponents.fx.menubuilder.command.ICommandFactory;
+import com.intechcore.scomponents.fx.menubuilder.common.TranslationServiceStub;
 import com.intechcore.scomponents.fx.menubuilder.config.IToolboxCommandConfig;
 import com.intechcore.scomponents.fx.menubuilder.control.ColorPickerBuilderAbstract;
 import com.intechcore.scomponents.fx.menubuilder.control.FxColorPickerBuilder;
@@ -156,6 +158,17 @@ public class MenuItemFactoryBuilder {
     }
 
     /**
+     * Sets the {@link II18nService} to translate titles and tooltips.
+     * <p>If not set, the {@link TranslationServiceStub} will be used
+     * @param i18n translation service
+     * @return this builder instance
+     */
+    public MenuItemFactoryBuilder setI18n(II18nService i18n) {
+        this.settings.i18n = i18n;
+        return this;
+    }
+
+    /**
      * Sets the parent window for any dialogs that may be opened
      *
      * @param value the parent window
@@ -175,12 +188,21 @@ public class MenuItemFactoryBuilder {
         private String submenuButtonStyle = "-fx-accent: transparent; -fx-selection-bar: transparent;";
         private Double iconScaleFactor;
         private IIconBuildMapper iconMapper;
+        private II18nService i18n;
         private Window parentWindow;
 
         public Supplier<ColorPickerBuilderAbstract<?>> getColorPickerBuilderSupplier() {
             return this.colorPickerBuilderSupplier != null
-                    ? this.colorPickerBuilderSupplier
-                    : FxColorPickerBuilder::new;
+                    ? () -> {
+                        ColorPickerBuilderAbstract<?> result = this.colorPickerBuilderSupplier.get();
+                        result.setI18n(this.getI18n());
+                        return result;
+                    }
+                    : () -> {
+                        FxColorPickerBuilder result = new FxColorPickerBuilder();
+                        result.setI18n(this.getI18n());
+                        return result;
+                    };
         }
 
         public boolean isOpenSubmenuOnHover() {
@@ -211,6 +233,13 @@ public class MenuItemFactoryBuilder {
             return this.iconMapper != null
                     ? this.iconMapper
                     : new DefaultIconBuildMapper(new HashMap<>(), new Insets(0, 0, 0, 0));
+        }
+
+        public II18nService getI18n() {
+            if (this.i18n == null) {
+                this.i18n = new TranslationServiceStub();
+            }
+            return this.i18n;
         }
 
         public Window getParentWindow() {

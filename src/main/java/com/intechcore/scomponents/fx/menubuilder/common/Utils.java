@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import com.intechcore.scomponents.fx.menubuilder.command.ICommandParameter;
 import com.intechcore.scomponents.fx.menubuilder.config.IToolboxCommandConfig;
 import com.intechcore.scomponents.fx.menubuilder.control.EventTracker;
 import com.intechcore.scomponents.fx.menubuilder.control.IControlBuilder;
-import com.intechcore.scomponents.fx.menubuilder.control.ITranslatedText;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -118,7 +117,7 @@ public final class Utils {
      * @param result the control
      * @param text the text to set
      */
-    public static void setLabel(Control result, ITranslatedText text) {
+    public static void setLabel(Control result, String text) {
         if (!(result instanceof Labeled)) {
             return;
         }
@@ -126,8 +125,8 @@ public final class Utils {
         Labeled labeledControl = (Labeled) result;
 
         String existingLabel = labeledControl.getText();
-        if (existingLabel == null || "".equals(existingLabel)) {
-            labeledControl.setText(text.getDefaultLangText());
+        if (existingLabel == null || existingLabel.isEmpty()) {
+            labeledControl.setText(text);
         }
     }
 
@@ -136,9 +135,9 @@ public final class Utils {
      * @param result the control
      * @param text the text to set
      */
-    public static void setTooltip(Control result, ITranslatedText text) {
-        if (text != null && !text.getDefaultLangText().isEmpty()) {
-            result.setTooltip(new Tooltip(text.getDefaultLangText()));
+    public static void setTooltip(Control result, String text) {
+        if (text != null && !text.isEmpty()) {
+            result.setTooltip(new Tooltip(text));
         }
     }
 }

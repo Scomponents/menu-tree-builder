@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.intechcore.scomponents.fx.menubuilder.control;
 
+import com.intechcore.scomponents.common.core.i18n.II18nService;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ToggleButton;
@@ -27,6 +28,10 @@ import java.util.function.Supplier;
  * A builder for creating a JavaFX ToggleButton
  */
 public class FxToggleButtonBuilder extends FxButtonBuilder {
+
+    public FxToggleButtonBuilder(II18nService i18n) {
+        super(i18n);
+    }
 
     @Override
     public ButtonBase create(Node icon) {

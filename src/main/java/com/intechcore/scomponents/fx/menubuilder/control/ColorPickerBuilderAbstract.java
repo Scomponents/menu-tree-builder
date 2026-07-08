@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2025 Intechcore GmbH
+ * Copyright (c) 2026-present, Intechcore GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.intechcore.scomponents.fx.menubuilder.control;
 
+import com.intechcore.scomponents.common.core.i18n.II18nService;
 import com.intechcore.scomponents.fx.menubuilder.command.AbstractCommand;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,7 +33,15 @@ import java.util.function.Supplier;
  * @param <TColor> the type of the color
  */
 public abstract class ColorPickerBuilderAbstract<TColor> extends ControlBuilder<ColorPicker, TColor> {
+    private II18nService i18n;
     private ColorPicker result;
+
+    protected ColorPickerBuilderAbstract() {
+    }
+
+    public void setI18n(II18nService i18n) {
+        this.i18n = i18n;
+    }
 
     @Override
     public ColorPicker create(Node icon) {
@@ -47,7 +56,7 @@ public abstract class ColorPickerBuilderAbstract<TColor> extends ControlBuilder<
 
     @Override
     public void configureForCommand(AbstractCommand<?> command) {
-        this.result.setPromptText(command.getCommandInfo().getShortName().getDefaultLangText());
+        this.result.setPromptText(this.i18n.translate(command.getCommandInfo().getShortName()));
 
         Skin<?> customSkin = this.createCustomSkin(this.result, command);
         if (customSkin != null) {
