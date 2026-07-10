@@ -14,6 +14,7 @@ package com.intechcore.scomponents.fx.menubuilder;
 
 import com.intechcore.scomponents.common.core.event.events.DisabledStateEvent;
 import com.intechcore.scomponents.common.core.event.manager.IEventManager;
+import com.intechcore.scomponents.common.core.i18n.II18nKey;
 import com.intechcore.scomponents.fx.menubuilder.command.AbstractCommand;
 import com.intechcore.scomponents.fx.menubuilder.command.ICommandFactory;
 import com.intechcore.scomponents.fx.menubuilder.command.ICommandGroup;
@@ -21,6 +22,7 @@ import com.intechcore.scomponents.fx.menubuilder.command.ICommandInfo;
 import com.intechcore.scomponents.fx.menubuilder.command.ToolbarCommandParameter;
 import com.intechcore.scomponents.fx.menubuilder.common.Utils;
 import com.intechcore.scomponents.fx.menubuilder.config.IToolboxCommandConfig;
+import com.intechcore.scomponents.fx.menubuilder.config.ProxyCommandConfig;
 import com.intechcore.scomponents.fx.menubuilder.config.ToggleGroupCommandConfig;
 import com.intechcore.scomponents.fx.menubuilder.control.ComboBoxBuilder;
 import com.intechcore.scomponents.fx.menubuilder.control.FxButtonBuilder;
@@ -134,7 +136,9 @@ public class MenuItemFactory<TCustomParam> {
                                     .filtered(Control.class::isInstance)
                                     .forEach(node -> Utils.setLabel(
                                             (Control) node,
-                                            this.settings.getI18n().translate(groupInfo.getShortName((IToolboxCommandConfig) node.getUserData())))
+                                            this.settings.getI18n().translate(
+                                                    groupInfo.getShortName((IToolboxCommandConfig) node.getUserData()))
+                                            )
                                     );
                         }
 
@@ -273,6 +277,9 @@ public class MenuItemFactory<TCustomParam> {
         if (toggleGroupParent != null && data.getControlType() == IToolboxCommandConfig.ControlType.TOGGLE_BUTTON) {
             ToggleGroupData groupData = this.radioButtons
                     .computeIfAbsent(toggleGroupParent, unused -> new ToggleGroupData());
+            if (data instanceof ProxyCommandConfig) {
+                data = ((ProxyCommandConfig) data).getOrigin();
+            }
             groupData.addToggleItem(
                     (ToggleButton) resultControl,
                     new ToggleGroupData.ToggleItemData(controlFactory, props, data)
@@ -359,10 +366,10 @@ public class MenuItemFactory<TCustomParam> {
             submenuButton.setPadding(submenuInsets);
         }
 
-        Utils.setTooltip(
-                submenuButton,
-                this.settings.getI18n().translate(this.commandFactory.createTooltip(data))
-        );
+        II18nKey tooltipKey = this.commandFactory.createTooltip(data);
+        if (tooltipKey != null) {
+            Utils.setTooltip(submenuButton, this.settings.getI18n().translate(tooltipKey));
+        }
 
         return submenuButton;
     }

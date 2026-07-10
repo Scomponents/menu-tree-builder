@@ -26,6 +26,6 @@ public interface ICommandGroup<TCustomEnum extends Enum<TCustomEnum>> {
      * @return this instance cast to the enum type
      */
     default TCustomEnum cast() {
-        return (TCustomEnum)this;
+        return (TCustomEnum) this;
     }
 }
