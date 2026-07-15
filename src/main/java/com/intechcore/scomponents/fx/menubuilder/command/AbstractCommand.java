@@ -55,7 +55,7 @@ public abstract class AbstractCommand<TParam> implements ICommand<TParam> {
     }
 
     @Override
-    public CommandResultsSource<Object> getDataSource() {
+    public CommandResultsSource<?> getDataSource() {
         return null;
     }
 

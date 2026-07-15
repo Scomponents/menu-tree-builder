@@ -16,6 +16,8 @@
 
 package com.intechcore.scomponents.fx.menubuilder.command;
 
+import javafx.util.StringConverter;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -25,16 +27,16 @@ import java.util.stream.Stream;
  */
 public class CommandResultsSource<TResult> {
     private final List<TResult> items;
-    private final TResult item;
+    private final StringConverter<TResult> converter;
 
     /**
      * Constructs a new CommandResultsSource
      * @param items the items in the source
-     * @param item the single item in the source
+     * @param converter optional converter
      */
-    public CommandResultsSource(List<TResult> items, TResult item) {
+    public CommandResultsSource(List<TResult> items, StringConverter<TResult> converter) {
         this.items = items;
-        this.item = item;
+        this.converter = converter;
     }
 
     /**
@@ -42,6 +44,13 @@ public class CommandResultsSource<TResult> {
      */
     public boolean isCollection() {
         return this.items != null;
+    }
+
+    /**
+     * @return optional converter
+     */
+    public StringConverter<TResult> getConverter() {
+        return this.converter;
     }
 
     /**

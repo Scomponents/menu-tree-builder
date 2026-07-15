@@ -26,7 +26,7 @@ This project uses Maven for dependency management. To include it in your project
 <dependency>
     <groupId>com.intechcore.scomponents</groupId>
     <artifactId>menu-tree-builder</artifactId>
-    <version>1.6.0</version>
+    <version>1.8.0</version>
 </dependency>
 ```
 

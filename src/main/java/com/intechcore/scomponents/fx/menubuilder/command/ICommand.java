@@ -33,7 +33,7 @@ public interface ICommand<TValue> {
     /**
      * @return the data source for this command. This is used for commands that need to populate a control with data, such as a combo box
      */
-    CommandResultsSource<Object> getDataSource();
+    CommandResultsSource<?> getDataSource();
 
     /**
      * @return true if the command should be initially disabled, false otherwise

@@ -17,12 +17,14 @@
 package com.intechcore.scomponents.fx.menubuilder.control;
 
 import com.intechcore.scomponents.fx.menubuilder.command.AbstractCommand;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.text.Font;
+import javafx.util.StringConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,17 +86,18 @@ public class ComboBoxBuilder extends ControlBuilder<ComboBox<Object>, Object> {
             @Override
             protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
-
-                this.setText((String)item);
+                this.setText(item == null ? null : item.toString());
                 this.setMinHeight(0);
-
-                double maxHeight = ComboBoxBuilder.this.unsupportedItems.contains(item) ? 0 : Double.MAX_VALUE;
+                double maxHeight = ComboBoxBuilder.this.unsupportedItems.contains(item)
+                        ? 0
+                        : Double.MAX_VALUE;
                 this.setMaxHeight(maxHeight);
 
                 if (ComboBoxBuilder.this.tryToSetFontToLabelFromItemValue) {
                     try {
-                        this.setFont(new Font((String)item, this.getFont().getSize()));
-                    } catch (Exception ignored) { }
+                        this.setFont(new Font((String) item, this.getFont().getSize()));
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         };
@@ -102,7 +105,24 @@ public class ComboBoxBuilder extends ControlBuilder<ComboBox<Object>, Object> {
 
     @Override
     public void configureForCommand(final AbstractCommand<?> command) {
-        this.result.getItems().addAll(command.getDataSource().getItems().collect(Collectors.toList()));
+        StringConverter<Object> converter = (StringConverter<Object>) command.getDataSource().getConverter();
+        if (converter != null) {
+            this.result.setConverter(converter);
+            this.result.setCellFactory(objectListView -> new ListCell<Object>() {
+                @Override
+                protected void updateItem(Object item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        this.setText(null);
+                    } else {
+                        this.setText(converter.toString(item));
+                    }
+                }
+            });
+        }
+        this.result.setItems(
+                FXCollections.observableList(command.getDataSource().getItems().collect(Collectors.toList()))
+        );
     }
 
     @Override
