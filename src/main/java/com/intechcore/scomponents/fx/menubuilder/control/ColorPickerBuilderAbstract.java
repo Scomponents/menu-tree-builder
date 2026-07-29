@@ -20,9 +20,12 @@ import com.intechcore.scomponents.common.core.i18n.II18nService;
 import com.intechcore.scomponents.fx.menubuilder.command.AbstractCommand;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Skin;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 
 import java.util.function.Consumer;
@@ -32,7 +35,7 @@ import java.util.function.Supplier;
  * An abstract builder for creating a JavaFX ColorPicker
  * @param <TColor> the type of the color
  */
-public abstract class ColorPickerBuilderAbstract<TColor> extends ControlBuilder<ColorPicker, TColor> {
+public abstract class ColorPickerBuilderAbstract<TColor> extends ControlBuilder<TColor> {
     private II18nService i18n;
     private ColorPicker result;
 
@@ -44,14 +47,21 @@ public abstract class ColorPickerBuilderAbstract<TColor> extends ControlBuilder<
     }
 
     @Override
-    public ColorPicker create(Node icon) {
+    public Node create(Node icon) {
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
-        colorPicker.setDisable(true);
 
         this.result = colorPicker;
         this.result.setMaxWidth(Double.MAX_VALUE);
-        return this.result;
+        HBox result = new HBox();
+        result.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
+        result.setAlignment(Pos.CENTER);
+        if (icon != null) {
+            result.getChildren().add(icon);
+            HBox.setHgrow(icon, Priority.ALWAYS);
+        }
+        result.getChildren().add(colorPicker);
+        return result;
     }
 
     @Override

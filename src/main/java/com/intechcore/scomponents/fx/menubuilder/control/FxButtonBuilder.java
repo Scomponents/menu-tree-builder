@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 /**
  * A builder for creating a JavaFX Button
  */
-public class FxButtonBuilder extends ControlBuilder<ButtonBase, Object> {
+public class FxButtonBuilder extends ControlBuilder<Object> {
     protected ButtonBase result;
     protected boolean iconIsNull;
     protected final II18nService i18n;

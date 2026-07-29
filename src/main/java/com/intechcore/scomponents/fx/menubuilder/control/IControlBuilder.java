@@ -20,7 +20,6 @@ import com.intechcore.scomponents.fx.menubuilder.command.AbstractCommand;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 
 import java.util.function.Consumer;
@@ -28,17 +27,16 @@ import java.util.function.Supplier;
 
 /**
  * An interface for building a JavaFX control
- * @param <TControl> the type of the control to build
  * @param <TActionResult> the type of the result of the control's action
  */
-public interface IControlBuilder<TControl extends Control, TActionResult> {
+public interface IControlBuilder<TActionResult> {
 
     /**
      * Creates the control
      * @param icon the icon to use for the control
      * @return the created control
      */
-    TControl create(Node icon);
+    Node create(Node icon);
 
     /**
      * Configures the control for the given command
@@ -80,7 +78,7 @@ public interface IControlBuilder<TControl extends Control, TActionResult> {
      * @param command the command to create the skin for
      * @return the created skin
      */
-    default Skin<?> createCustomSkin(TControl control, AbstractCommand<?> command) {
+    default Skin<?> createCustomSkin(Node control, AbstractCommand<?> command) {
         return null;
     }
 

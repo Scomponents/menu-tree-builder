@@ -232,7 +232,7 @@ public class MenuItemFactoryBuilder {
         public IIconBuildMapper getIconMapper() {
             return this.iconMapper != null
                     ? this.iconMapper
-                    : new DefaultIconBuildMapper(new HashMap<>(), new Insets(0, 0, 0, 0));
+                    : new DefaultIconBuildMapper(new HashMap<>());
         }
 
         public II18nService getI18n() {

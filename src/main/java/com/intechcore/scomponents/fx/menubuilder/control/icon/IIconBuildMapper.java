@@ -15,7 +15,6 @@
  */
 package com.intechcore.scomponents.fx.menubuilder.control.icon;
 
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 
 import java.util.Map;
@@ -30,12 +29,6 @@ public interface IIconBuildMapper {
      * @return the created icon
      */
     Node createIcon(IIcon icon);
-
-    /**
-     * @param icon the icon to get the padding for
-     * @return the padding for the given icon
-     */
-    Insets getSubmenuPadding(IIcon icon);
 
     /**
      * @return the icon map

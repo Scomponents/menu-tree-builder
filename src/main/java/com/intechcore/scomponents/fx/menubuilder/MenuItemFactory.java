@@ -34,11 +34,11 @@ import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.Separator;
@@ -133,9 +133,9 @@ public class MenuItemFactory<TCustomParam> {
                         }
                         if (this.settings.isSetShortLabel()) {
                             toggleGroupData.toggleGroup.getToggles()
-                                    .filtered(Control.class::isInstance)
+                                    .filtered(Node.class::isInstance)
                                     .forEach(node -> Utils.setLabel(
-                                            (Control) node,
+                                            (Node) node,
                                             this.settings.getI18n().translate(
                                                     groupInfo.getShortName((IToolboxCommandConfig) node.getUserData()))
                                             )
@@ -238,11 +238,11 @@ public class MenuItemFactory<TCustomParam> {
         }
 
         public static class ToggleItemData {
-            public final IControlBuilder<? extends Control, ?> controlBuilder;
+            public final IControlBuilder<?> controlBuilder;
             public final NodeProps props;
             public final IToolboxCommandConfig commandConfig;
 
-            public ToggleItemData(IControlBuilder<? extends Control, ?> controlBuilder,
+            public ToggleItemData(IControlBuilder<?> controlBuilder,
                                   NodeProps props,
                                   IToolboxCommandConfig commandConfig) {
                 this.controlBuilder = controlBuilder;
@@ -264,8 +264,8 @@ public class MenuItemFactory<TCustomParam> {
             return this.createSubmenu(data, props);
         }
 
-        final IControlBuilder<? extends Control, ?> controlFactory = this.getControlFactory(data.getControlType());
-        final Control resultControl = controlFactory.create(this.getIcon(data.getIcon()));
+        final IControlBuilder<?> controlFactory = this.getControlFactory(data.getControlType());
+        final Node resultControl = controlFactory.create(this.getIcon(data.getIcon()));
         Utils.setId(resultControl, data, this.settings.getResultItemsIdCounter());
         resultControl.setDisable(true);
 
@@ -360,11 +360,7 @@ public class MenuItemFactory<TCustomParam> {
 
         submenuButton.setMaxWidth(Double.MAX_VALUE);
         submenuButton.setMaxHeight(Double.MAX_VALUE);
-
-        Insets submenuInsets = this.settings.getIconMapper().getSubmenuPadding(data.getIcon());
-        if (submenuInsets != null) {
-            submenuButton.setPadding(submenuInsets);
-        }
+        submenuButton.setAlignment(Pos.CENTER);
 
         II18nKey tooltipKey = this.commandFactory.createTooltip(data);
         if (tooltipKey != null) {
@@ -389,8 +385,8 @@ public class MenuItemFactory<TCustomParam> {
         return result;
     }
 
-    private void setCommand(final Control resultControl,
-                            final IControlBuilder<? extends Control, ?> controlFactory,
+    private void setCommand(final Node resultControl,
+                            final IControlBuilder<?> controlFactory,
                             final IToolboxCommandConfig commandConfig,
                             final List<MenuButton> parentsToClose) {
         this.eventManagerFuture.thenCompose(eventManager ->
@@ -438,7 +434,7 @@ public class MenuItemFactory<TCustomParam> {
 
                     Object defaultValue = command.getCommandInfo().getDefaultValue();
                     if (defaultValue != null) {
-                        ((IControlBuilder<? extends Control, Object>) controlFactory).setDefaultValue(defaultValue);
+                        ((IControlBuilder<Object>) controlFactory).setDefaultValue(defaultValue);
                     }
 
                 }, Platform::runLater));
@@ -467,7 +463,7 @@ public class MenuItemFactory<TCustomParam> {
 
     private void handleCommandAction(
             final AbstractCommand<TCustomParam> command,
-            final IControlBuilder<? extends Control, ?> controlFactory,
+            final IControlBuilder<?> controlFactory,
             final Supplier<?> commandValueFactory,
             final List<MenuButton> parentsToClose,
             final Consumer<Boolean> disableConsumer) {
@@ -484,7 +480,7 @@ public class MenuItemFactory<TCustomParam> {
         Consumer<Throwable> finishCommand = throwable -> {
             Utils.finishCommand(
                     throwable,
-                    (IControlBuilder<? extends Control, Object>) controlFactory,
+                    (IControlBuilder<Object>) controlFactory,
                     commandParameter,
                     disableConsumer,
                     this.settings.getParentWindow());
@@ -511,7 +507,7 @@ public class MenuItemFactory<TCustomParam> {
         }
     }
 
-    private IControlBuilder<? extends Control, ?> getControlFactory(IToolboxCommandConfig.ControlType controlType) {
+    private IControlBuilder<?> getControlFactory(IToolboxCommandConfig.ControlType controlType) {
         switch (controlType) {
             case COMBOBOX:
             case FONT_COMBOBOX:
@@ -530,7 +526,7 @@ public class MenuItemFactory<TCustomParam> {
     }
 
     private void setDisableEvent(Node result,
-                                 IControlBuilder<? extends Control, ?> controlFactory,
+                                 IControlBuilder<?> controlFactory,
                                  Class<? extends DisabledStateEvent> disableEventClass) {
         if (disableEventClass == null) {
             return;

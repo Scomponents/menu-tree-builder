@@ -18,4 +18,5 @@ package com.intechcore.scomponents.fx.menubuilder.control.icon;
 /**
  * A marker interface for an icon
  */
-public interface IIcon { }
+public interface IIcon {
+}

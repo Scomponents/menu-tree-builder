@@ -15,7 +15,6 @@
  */
 package com.intechcore.scomponents.fx.menubuilder.control.icon;
 
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 
 import java.util.Map;
@@ -26,16 +25,13 @@ import java.util.Map;
 public class DefaultIconBuildMapper implements IIconBuildMapper {
 
     private Map<IIcon, IIconSourceConfig> iconMap;
-    private final Insets submenuInset;
 
     /**
      * Constructs a new DefaultIconBuildMapper
      * @param iconMap a map from icon to icon source config
-     * @param submenuInset the inset for submenus
      */
-    public DefaultIconBuildMapper(Map<IIcon, IIconSourceConfig> iconMap, Insets submenuInset) {
+    public DefaultIconBuildMapper(Map<IIcon, IIconSourceConfig> iconMap) {
         this.iconMap = iconMap;
-        this.submenuInset = submenuInset;
     }
 
     @Override
@@ -53,11 +49,6 @@ public class DefaultIconBuildMapper implements IIconBuildMapper {
         }
 
         return builder.createIcon(this.iconMap.get(icon));
-    }
-
-    @Override
-    public Insets getSubmenuPadding(IIcon icon) {
-        return this.submenuInset;
     }
 
     @Override

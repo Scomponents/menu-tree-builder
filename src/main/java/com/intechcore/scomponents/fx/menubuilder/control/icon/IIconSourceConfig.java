@@ -26,11 +26,6 @@ public interface IIconSourceConfig {
     String[] getData();
 
     /**
-     * @return the left offset of the icon
-     */
-    double getLeftOffset();
-
-    /**
      * @return the builder for the icon
      */
     IIconBuilder getBuilder();

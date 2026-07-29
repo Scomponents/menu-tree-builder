@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * A builder for creating a JavaFX ComboBox
  */
-public class ComboBoxBuilder extends ControlBuilder<ComboBox<Object>, Object> {
+public class ComboBoxBuilder extends ControlBuilder<Object> {
     private ComboBox<Object> result;
     private EventHandler<ActionEvent> eventHandler;
     private final List<Object> unsupportedItems = new ArrayList<>();

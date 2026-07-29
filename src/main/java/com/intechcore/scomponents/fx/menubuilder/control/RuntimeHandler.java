@@ -16,21 +16,20 @@
 
 package com.intechcore.scomponents.fx.menubuilder.control;
 
-import javafx.scene.control.Control;
+import javafx.scene.Node;
 
 /**
  * A runtime handler for a control
- * @param <TControl> the type of the control
  */
-public class RuntimeHandler<TControl extends Control> implements IRuntimeHandler {
-    private final TControl target;
+public class RuntimeHandler implements IRuntimeHandler {
+    private final Node target;
     private final EventTracker tracker = new EventTracker();
 
     /**
      * Constructs a new RuntimeHandler
      * @param target the target control
      */
-    public RuntimeHandler(TControl target) {
+    public RuntimeHandler(Node target) {
         this.target = target;
     }
 

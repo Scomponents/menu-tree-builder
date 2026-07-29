@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-07-29
+### Fixed
+- Alignment of the submenus popups and buttons
+
+### Added
+- Icons to the ColorPicker controls
+
+### Changed
+- The IIconBuildMapper, IIconSourceConfig - removed extra getSubmenuPadding() getter and the left offset
+- The IControlBuilder - removed extra type parameter, set Node to all builder results
+
+### Removed
+- The SvgFileIconBuilder and Apache's Batik dependency, now the Hevergirod's SVGLoader is the main svg handler
+
 ## [1.8.0] - 2026-07-15
 ### Added
 - Converter to translation combobox items

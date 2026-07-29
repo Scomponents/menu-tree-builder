@@ -75,11 +75,6 @@ public enum Icons implements IIcon, IIconSourceConfig {
     }
 
     @Override
-    public double getLeftOffset() {
-        return 0;
-    }
-
-    @Override
     public IIconBuilder getBuilder() {
         return this.iconBuilder;
     }

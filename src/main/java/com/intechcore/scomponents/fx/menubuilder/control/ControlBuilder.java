@@ -16,26 +16,25 @@
 
 package com.intechcore.scomponents.fx.menubuilder.control;
 
-import javafx.scene.control.Control;
+import javafx.scene.Node;
 
 /**
  * An abstract base class for control builders
- * @param <TControl> the type of the control
  * @param <TActionResult> the type of the action result
  */
-public abstract class ControlBuilder<TControl extends Control, TActionResult>
-        implements IControlBuilder<TControl, TActionResult> {
+public abstract class ControlBuilder<TActionResult>
+        implements IControlBuilder<TActionResult> {
 
-    private RuntimeHandler<TControl> runtimeHandler;
+    private RuntimeHandler runtimeHandler;
 
     @Override
     public IRuntimeHandler getHandler() {
         if (this.runtimeHandler == null) {
-            TControl target = this.getTarget();
+            Node target = this.getTarget();
             if (target == null) {
                 return null;
             }
-            this.runtimeHandler = new RuntimeHandler<>(target);
+            this.runtimeHandler = new RuntimeHandler(target);
         }
         return this.runtimeHandler;
     }
@@ -43,5 +42,5 @@ public abstract class ControlBuilder<TControl extends Control, TActionResult>
     /**
      * @return the target control
      */
-    protected abstract TControl getTarget();
+    protected abstract Node getTarget();
 }

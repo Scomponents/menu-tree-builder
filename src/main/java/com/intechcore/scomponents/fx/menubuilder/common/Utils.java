@@ -19,7 +19,6 @@ package com.intechcore.scomponents.fx.menubuilder.common;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Control;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
@@ -79,7 +78,7 @@ public final class Utils {
      */
     public static <TCustomParam> void finishCommand(
             Throwable throwable,
-            IControlBuilder<? extends Control, Object> controlFactory,
+            IControlBuilder<Object> controlFactory,
             ICommandParameter<TCustomParam> commandParameter,
             final Consumer<Boolean> disableConsumer,
             Window parentWindow) {
@@ -117,7 +116,7 @@ public final class Utils {
      * @param result the control
      * @param text the text to set
      */
-    public static void setLabel(Control result, String text) {
+    public static void setLabel(Node result, String text) {
         if (!(result instanceof Labeled)) {
             return;
         }
@@ -135,9 +134,9 @@ public final class Utils {
      * @param result the control
      * @param text the text to set
      */
-    public static void setTooltip(Control result, String text) {
+    public static void setTooltip(Node result, String text) {
         if (text != null && !text.isEmpty()) {
-            result.setTooltip(new Tooltip(text));
+            Tooltip.install(result, new Tooltip(text));
         }
     }
 }

@@ -15,8 +15,6 @@
  */
 package com.intechcore.scomponents.fx.menubuilder.control.icon;
 
-import javafx.geometry.Insets;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +35,8 @@ public final class Util {
 
         Map<IIcon, IIconSourceConfig> iconMap = new HashMap<IIcon, IIconSourceConfig>();
 
-        if (enumValues == null || enumValues.length == 0) {
-            return new DefaultIconBuildMapper(iconMap, new Insets(0, 0, 0, 0));
+        if (enumValues == null) {
+            return new DefaultIconBuildMapper(iconMap);
         }
 
         for (TIconEnum icon : enumValues) {
@@ -47,13 +45,12 @@ public final class Util {
             }
 
             IIconSourceConfig iconConfig = (IIconSourceConfig)Enum.valueOf(enumType, icon.name());
-            iconMap.put((IIcon)icon, iconConfig);
+            iconMap.put((IIcon) icon, iconConfig);
         }
 
-        double inset = iconMap.entrySet().iterator().next().getValue().getLeftOffset();
-
-        return new DefaultIconBuildMapper(iconMap, new Insets(0, 0, 0, inset));
+        return new DefaultIconBuildMapper(iconMap);
     }
 
-    private Util() {}
+    private Util() {
+    }
 }

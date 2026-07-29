@@ -9,12 +9,12 @@ A JavaFX library for creating dynamic and configurable toolbars and menu items u
 
 ## Features
 
-- **Declarative UI:** Define toolbar and menu items using enums and builders.
-- **Command Pattern:** Decouple UI components from their actions using a command pattern.
-- **SVG Support:** Use SVG icons for your UI components[^1].
-- **State Management:** Manage the state of your application and reflect it in the UI.
-- **Extensible:** Easily extend the library with your own commands and UI components.
-- **Cross-Java:** Compiled for Java 8 compatible with 11+.
+- **Declarative UI:** Define toolbar and menu items using enums and builders
+- **Command Pattern:** Decouple UI components from their actions using a command pattern
+- **SVG Support:** Use SVG icons for your UI components[^1]
+- **State Management:** Manage the state of your application and reflect it in the UI
+- **Extensible:** Easily extend the library with your own commands and UI components
+- **Cross-Java:** Compiled for Java 8 and compatible with 11+
 
 [^1]: The [com.github.hervegirod.fxsvgimage](https://github.com/hervegirod/fxsvgimage) is using. This library for now (version 1.7.3) can fail to draw some svg files, so you can fix the SVG from scratch to success drawing
 
@@ -26,7 +26,7 @@ This project uses Maven for dependency management. To include it in your project
 <dependency>
     <groupId>com.intechcore.scomponents</groupId>
     <artifactId>menu-tree-builder</artifactId>
-    <version>1.8.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -157,12 +157,11 @@ public class Example extends Application {
 
 ## Dependencies
 
+- [OpenJFX](https://openjfx.io/)
+- [fxsvgimage](https://github.com/hervegirod/fxsvgimage)
 - [common-core](https://github.com/Scomponents/java-common-core)
 - [SLF4J](https://www.slf4j.org/)
-- [Apache Batik](https://xmlgraphics.apache.org/batik/)
-- [fxsvgimage](https://github.com/hervegirod/fxsvgimage)
 - [JUnit 5](https://junit.org/junit5/) (for testing)
-- [OpenJFX](https://openjfx.io/)
 
 ## History
 
